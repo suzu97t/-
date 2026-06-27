@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {
+  Dimensions,
   SafeAreaView,
   StatusBar,
   StyleSheet,
@@ -8,12 +9,18 @@ import {
   View,
 } from 'react-native';
 
+const {width} = Dimensions.get('window');
+const BTN_GAP = 13;
+const BTN_SIZE = (width - 40 - BTN_GAP * 3) / 4;
+
 type ButtonValue =
   | '0' | '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9'
   | '.' | '+' | '-' | '×' | '÷' | '=' | 'AC' | '+/-' | '%';
 
 interface CalcState {
   display: string;
+  expression: string;
+  history: string;
   previousValue: number | null;
   operator: string | null;
   waitingForOperand: boolean;
@@ -21,6 +28,8 @@ interface CalcState {
 
 const INITIAL_STATE: CalcState = {
   display: '0',
+  expression: '',
+  history: '',
   previousValue: null,
   operator: null,
   waitingForOperand: false,
@@ -36,13 +45,11 @@ function calculate(a: number, b: number, op: string): number {
   }
 }
 
-function formatDisplay(value: string): string {
+function formatNumber(value: string): string {
   const num = parseFloat(value);
   if (isNaN(num)) return 'エラー';
   if (value.endsWith('.')) return value;
-  if (Math.abs(num) >= 1e10 || (Math.abs(num) < 1e-6 && num !== 0)) {
-    return num.toExponential(4);
-  }
+  if (Math.abs(num) >= 1e10) return num.toExponential(3);
   const parts = value.split('.');
   parts[0] = Number(parts[0]).toLocaleString('ja-JP');
   return parts.join('.');
@@ -54,15 +61,24 @@ export default function App(): React.JSX.Element {
   const handleNumber = (num: string) => {
     setState(prev => {
       if (prev.waitingForOperand) {
-        return {...prev, display: num, waitingForOperand: false};
+        return {
+          ...prev,
+          display: num,
+          expression: prev.expression + num,
+          waitingForOperand: false,
+        };
       }
-      if (prev.display === '0' && num !== '.') {
-        return {...prev, display: num};
-      }
-      if (num === '.' && prev.display.includes('.')) {
-        return prev;
-      }
-      return {...prev, display: prev.display + num};
+      const newDisplay =
+        prev.display === '0' && num !== '.'
+          ? num
+          : prev.display.includes('.') && num === '.'
+          ? prev.display
+          : prev.display + num;
+      return {
+        ...prev,
+        display: newDisplay,
+        expression: prev.expression.slice(0, -prev.display.length) + newDisplay,
+      };
     });
   };
 
@@ -71,8 +87,11 @@ export default function App(): React.JSX.Element {
       const current = parseFloat(prev.display);
       if (prev.previousValue !== null && !prev.waitingForOperand) {
         const result = calculate(prev.previousValue, current, prev.operator!);
+        const resultStr = String(result);
         return {
-          display: String(result),
+          display: resultStr,
+          expression: formatNumber(resultStr) + ' ' + op + ' ',
+          history: prev.expression,
           previousValue: result,
           operator: op,
           waitingForOperand: true,
@@ -80,6 +99,8 @@ export default function App(): React.JSX.Element {
       }
       return {
         ...prev,
+        expression: formatNumber(prev.display) + ' ' + op + ' ',
+        history: prev.history,
         previousValue: current,
         operator: op,
         waitingForOperand: true,
@@ -92,8 +113,11 @@ export default function App(): React.JSX.Element {
       if (prev.previousValue === null || prev.operator === null) return prev;
       const current = parseFloat(prev.display);
       const result = calculate(prev.previousValue, current, prev.operator);
+      const resultStr = String(result);
       return {
-        display: String(result),
+        display: resultStr,
+        expression: '',
+        history: prev.expression + formatNumber(prev.display) + ' =',
         previousValue: null,
         operator: null,
         waitingForOperand: true,
@@ -141,44 +165,60 @@ export default function App(): React.JSX.Element {
     ['0', '.', '='],
   ];
 
-  const isOperator = (v: string) => ['+', '-', '×', '÷', '='].includes(v);
-  const isFuncButton = (v: string) => ['AC', '+/-', '%'].includes(v);
+  const isOperator = (v: string) => ['+', '-', '×', '÷'].includes(v);
+  const isActiveOp = (v: string) => state.operator === v && state.waitingForOperand;
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" backgroundColor="#000" />
+      <StatusBar barStyle="light-content" backgroundColor="#050510" />
       <View style={styles.container}>
+        {/* Display */}
         <View style={styles.displayContainer}>
-          <Text style={styles.displayText} numberOfLines={1} adjustsFontSizeToFit>
-            {formatDisplay(state.display)}
+          <Text style={styles.historyText} numberOfLines={1}>
+            {state.history}
+          </Text>
+          <Text style={styles.expressionText} numberOfLines={1}>
+            {state.expression}
+          </Text>
+          <Text
+            style={styles.resultText}
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.4}>
+            {formatNumber(state.display)}
           </Text>
         </View>
+
+        {/* Buttons */}
         <View style={styles.buttonsContainer}>
           {buttons.map((row, rowIndex) => (
             <View key={rowIndex} style={styles.row}>
               {row.map(value => {
                 const isZero = value === '0';
                 const isOp = isOperator(value);
-                const isActive = isOp && state.operator === value && state.waitingForOperand;
-                const isFunc = isFuncButton(value);
+                const isEq = value === '=';
+                const isFunc = ['AC', '+/-', '%'].includes(value);
+                const active = isActiveOp(value);
+
                 return (
                   <TouchableOpacity
                     key={value}
                     style={[
-                      styles.button,
-                      isZero && styles.buttonWide,
-                      isOp && styles.buttonOperator,
-                      isFunc && styles.buttonFunc,
-                      isActive && styles.buttonOperatorActive,
+                      styles.btn,
+                      isZero && styles.btnWide,
+                      isFunc && styles.btnFunc,
+                      isOp && styles.btnOp,
+                      isEq && styles.btnEq,
+                      active && styles.btnOpActive,
                     ]}
                     onPress={() => handlePress(value)}
-                    activeOpacity={0.7}>
+                    activeOpacity={0.65}>
                     <Text
                       style={[
-                        styles.buttonText,
-                        isOp && styles.buttonTextOperator,
-                        isFunc && styles.buttonTextFunc,
-                        isActive && styles.buttonTextActive,
+                        styles.btnText,
+                        isFunc && styles.btnTextFunc,
+                        isOp && styles.btnTextOp,
+                        isEq && styles.btnTextOp,
                       ]}>
                       {value}
                     </Text>
@@ -193,32 +233,44 @@ export default function App(): React.JSX.Element {
   );
 }
 
-const BTN_SIZE = 80;
-const BTN_GAP = 12;
-
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#050510',
   },
   container: {
     flex: 1,
-    backgroundColor: '#000',
+    backgroundColor: '#050510',
     justifyContent: 'flex-end',
-    paddingHorizontal: 16,
-    paddingBottom: 20,
+    paddingHorizontal: 20,
+    paddingBottom: 28,
   },
   displayContainer: {
     alignItems: 'flex-end',
-    paddingHorizontal: 8,
-    paddingBottom: 16,
-    minHeight: 100,
-    justifyContent: 'flex-end',
+    paddingHorizontal: 6,
+    paddingBottom: 24,
+    gap: 4,
   },
-  displayText: {
+  historyText: {
+    color: 'rgba(255,255,255,0.2)',
+    fontSize: 16,
+    fontWeight: '300',
+    letterSpacing: 0.5,
+    minHeight: 22,
+  },
+  expressionText: {
+    color: 'rgba(255,255,255,0.4)',
+    fontSize: 22,
+    fontWeight: '300',
+    letterSpacing: 1,
+    minHeight: 30,
+  },
+  resultText: {
     color: '#fff',
-    fontSize: 72,
+    fontSize: 80,
     fontWeight: '200',
+    letterSpacing: -3,
+    lineHeight: 88,
   },
   buttonsContainer: {
     gap: BTN_GAP,
@@ -227,40 +279,67 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     gap: BTN_GAP,
   },
-  button: {
+  btn: {
     width: BTN_SIZE,
     height: BTN_SIZE,
-    borderRadius: BTN_SIZE / 2,
-    backgroundColor: '#333',
+    borderRadius: 22,
+    backgroundColor: '#1a1a28',
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.06)',
+    shadowColor: '#000',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 8,
   },
-  buttonWide: {
+  btnWide: {
     width: BTN_SIZE * 2 + BTN_GAP,
     alignItems: 'flex-start',
-    paddingLeft: 28,
+    paddingLeft: 24,
   },
-  buttonOperator: {
-    backgroundColor: '#FF9F0A',
+  btnFunc: {
+    backgroundColor: '#1e1e30',
+    borderColor: 'rgba(255,255,255,0.08)',
   },
-  buttonOperatorActive: {
-    backgroundColor: '#fff',
+  btnOp: {
+    backgroundColor: '#6B2FE0',
+    borderWidth: 0,
+    shadowColor: '#7B3FF5',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 12,
   },
-  buttonFunc: {
-    backgroundColor: '#A5A5A5',
+  btnOpActive: {
+    backgroundColor: '#8B4FFF',
+    shadowOpacity: 0.8,
+    shadowRadius: 18,
   },
-  buttonText: {
-    color: '#fff',
-    fontSize: 32,
+  btnEq: {
+    backgroundColor: '#E8420A',
+    borderWidth: 0,
+    shadowColor: '#FF6B35',
+    shadowOffset: {width: 0, height: 4},
+    shadowOpacity: 0.6,
+    shadowRadius: 12,
+    elevation: 12,
+  },
+  btnText: {
+    color: '#d0d0e8',
+    fontSize: 28,
     fontWeight: '400',
   },
-  buttonTextOperator: {
+  btnTextFunc: {
+    color: '#9090b8',
+    fontSize: 18,
+    fontWeight: '500',
+    letterSpacing: 0.5,
+  },
+  btnTextOp: {
     color: '#fff',
-  },
-  buttonTextActive: {
-    color: '#FF9F0A',
-  },
-  buttonTextFunc: {
-    color: '#000',
+    fontSize: 26,
+    fontWeight: '400',
   },
 });
