@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """base.html（new_deck.py の出力）の CSS を流用し、本文セクションを実物に差し替える。"""
-import pathlib, re
+import pathlib
 
 HERE = pathlib.Path(__file__).resolve().parent
 base = (HERE / "base.html").read_text(encoding="utf-8")
@@ -10,6 +10,9 @@ LOGO = "A社 情報システム部"
 
 EXTRA_CSS = """
 /* ===== このデッキ側の調整（slide-rules 手順9: パーツのCSSはデッキ側で直してよい） ===== */
+/* 2つのパーツ集で版面が 3〜22px ずれるので、追加パーツ集（.slide）を基本パーツ集（.s）に合わせる（§4.19） */
+.slide .sinner{inset:56px 75.6px 28px 75.6px}
+.slide .title{margin-top:21px}
 /* エグゼクティブサマリー（現状→理由→打ち手の3段。§7.16） */
 .slide .es-grp{display:grid;grid-template-columns:160px 1fr;column-gap:32px;padding:22px 0;border-top:1px solid var(--rule);align-items:start}
 .slide .es-grp:first-child{border-top:0;padding-top:0}
@@ -24,9 +27,9 @@ EXTRA_CSS = """
 .s .hbar .fill{height:100%;background:var(--rule)}
 .s .hbar .fill.on{background:var(--accent)}
 .s .hbar .val{text-align:right;font-weight:700}
-/* 選択肢の比較表を5列にする（案3つ＋読み取り） */
-.slide .comparison{grid-template-columns:0.92fr 0.86fr 0.86fr 0.98fr 1.5fr}
-.slide .comparison > div{border-bottom:1px solid var(--hairline)}
+/* 選択肢の比較表を5列にする（案3つ＋示唆） */
+.slide .comparison{grid-template-columns:0.92fr 0.8fr 0.86fr 0.92fr 1.6fr}
+.slide .comparison > div{min-height:72px;border-bottom:1px solid var(--hairline)}
 .slide .comparison > div:nth-last-child(-n+5){border-bottom:0}
 .slide .comparison .na{background:var(--hairline);color:var(--muted)}
 .slide .comparison .win{font-weight:700}
@@ -44,17 +47,22 @@ EXTRA_CSS = """
 .slide .risk-table ul{margin:0;padding-left:18px}
 .slide .risk-table li{margin:0 0 6px}
 .slide .risk-table li:last-child{margin-bottom:0}
-/* 増減ブリッジの凡例（色を分けたら凡例を置く。§5.2） */
+/* 増減ブリッジ: 濃色＝自動応答が効く分（p3 の横棒と同じ意味）、起点と着地は淡色、増える分は白抜き */
+.slide .twf-bar.base,.slide .twf-bar.total{background:var(--rule)}
+.slide .twf-bar.down{background:var(--accent)}
+.slide .twf-bar.up{background:none;border:1.8px solid var(--ink)}
 .slide .wf-legend{display:flex;gap:30px;margin-top:20px;font-size:16px;color:var(--ink)}
 .slide .wf-legend span{display:flex;align-items:center;gap:8px}
 .slide .wf-legend i{width:16px;height:16px;display:inline-block}
-.slide .wf-legend .c-down{background:var(--cyan)}
-.slide .twf-bar.up{background:none;border:1.8px solid var(--ink)}
+.slide .wf-legend .c-tot{background:var(--rule)}
+.slide .wf-legend .c-down{background:var(--accent)}
 .slide .wf-legend .c-up{background:none;border:1.8px solid var(--ink)}
-.slide .wf-legend .c-tot{background:var(--ink)}
-/* ロードマップ: 説明文は本文と同じ濃さで読ませ、器を内容の高さに合わせる（§5.13 引き伸ばし禁止） */
+/* ロードマップ: 時間の向きを軸で示し、説明文は本文と同じ濃さで読ませる */
+.slide .rm-axis{position:relative;height:2px;background:var(--navy);margin-bottom:20px}
+.slide .rm-axis::after{content:"";position:absolute;right:-1px;top:-5px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:12px solid var(--navy)}
 .slide .phase-copy{color:var(--ink)}
 .slide .phase{min-height:auto}
+.slide .phase:first-child{padding-left:0}
 .slide .phase-out{margin-top:16px;padding-top:12px;border-top:1px solid var(--hairline);font-size:17px;line-height:1.35}
 """
 
@@ -84,21 +92,21 @@ cover = f"""<section class="s cover">
 p1 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("要約")}
-    <h1 class="title">一次対応は自動応答に寄せ、情報システム部は例外と承認に残る</h1>
+    <h1 class="title">一次対応は自動応答に置き換え、情報システム部は例外と承認に残る</h1>
     <div class="rule"></div>
     <div class="content">
       <div class="es-grp"><div class="es-lab">現状</div><div class="es-body"><ul>
-        <li>問い合わせは月800件まで増えたが、一次対応は情報システム部の2名が兼務で受けている</li>
-        <li>初回の回答は7月に11.8時間まで遅れ、翌営業日にずれ込む案件が出ている</li>
+        <li>問い合わせは月平均800件で、一次対応は情報システム部の2名が兼務で受けている</li>
+        <li>初回の回答までの平均時間は7月に11.8時間まで伸び、1営業日を超えている</li>
       </ul></div></div>
       <div class="es-grp"><div class="es-lab">遅れの理由</div><div class="es-body"><ul>
         <li>件数の半分はパスワード再発行と経費精算の差し戻しで、どちらも手順が決まっている</li>
-        <li><strong>手順が決まった問い合わせを人が読んで返している間、判断が必要な案件が待たされている</strong></li>
+        <li><strong>手順が決まっている問い合わせを人が読んで返している間、判断が必要な問い合わせが待たされている</strong></li>
       </ul></div></div>
       <div class="es-grp"><div class="es-lab">打ち手と判断</div><div class="es-body"><ul>
-        <li>既存のチャットに自動応答を足してパスワード再発行から置き換えると、工数は月160時間から116時間まで落ちる</li>
-        <li>回答の確定は担当者が行い、例外処理と承認は情報システム部に残す</li>
-        <li>対象とする種別と承認の持ち方と費用枠を今週決める</li>
+        <li>既存のチャットに自動応答を足し、11月にパスワード再発行、12月以降に経費精算の差し戻しを置き換える</li>
+        <li>工数は月160時間から11月に約138時間、12月以降は116時間まで減り、例外処理と承認は情報システム部に残る</li>
+        <li>対象の種別、承認の権限、費用枠を今週決める</li>
       </ul></div></div>
     </div>
     <footer class="footer"><span class="source">注：架空の事例。数値は問い合わせ管理システムの記録を模した仮置きの値</span><span>1</span></footer>
@@ -115,21 +123,21 @@ bar_html = "".join(
 p2 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("回答までの時間")}
-    <h1 class="title">初回の回答は7月に11.8時間まで遅れ、翌営業日にずれ込む案件が出ている</h1>
+    <h1 class="title">初回の回答までの平均時間は7月に11.8時間まで伸び、1営業日を超えた</h1>
     <div class="rule"></div>
     <div class="content"><div class="two-col">
-      <div><div class="section-label">初回の回答までの平均時間、営業時間、2026年</div>
+      <div><div class="section-label">初回の回答までの平均時間、時間、2026年</div>
         <div class="bar-chart">{bar_html}</div>
       </div>
       <div class="insight-panel"><div class="section-label">遅れが出ている理由</div>
         <ul class="bullets">
           <li>一次対応は情報システム部の2名が<br>他の業務と兼務で受けている</li>
-          <li>6月からは端末の入れ替えが重なり、<br>件数が1.3倍に増えている</li>
-          <li>手順が決まった問い合わせも、<br>担当者が本文を読んで返している</li>
+          <li>端末の入れ替えが重なる6月以降は、<br>件数が5月までの1.3倍に増えている</li>
+          <li>手順が決まっている問い合わせも、<br>担当者が本文を読んで返している</li>
         </ul>
       </div>
     </div></div>
-    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。営業時間は1日8時間で換算。数値は仮置き</span><span>2</span></footer>
+    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。時間は1日8時間の営業時間で換算。1.3倍は4〜5月と6〜7月の月平均の比。数値は仮置き</span><span>2</span></footer>
   </div>
 </section>"""
 
@@ -158,15 +166,14 @@ p3 = f"""<section class="s">
       <div>
         <div class="axh"><span>問い合わせの件数</span><span class="u">件／月、2026年4〜7月の平均</span></div>
         <div class="hbar">{hb}</div>
-        <div class="legend left" style="margin-top:4mm"><span><i style="background:var(--accent)"></i>自動応答に寄せる種別</span><span><i style="background:var(--rule)"></i>人が受け続ける種別</span></div>
+        <div class="legend left" style="margin-top:4mm"><span><i style="background:var(--accent)"></i>自動応答に置き換える種別</span><span><i style="background:var(--rule)"></i>人が受け続ける種別</span></div>
       </div>
       <div>
-        <div class="colh">置き換えの向き不向き</div>
+        <div class="colh">置き換えの条件</div>
         <ul>
-          <li>パスワード再発行は手順が1本で、担当者の判断が入らない</li>
-          <li>経費精算の差し戻しは、理由が規程の5類型に収まる</li>
-          <li>端末の不調から下は現物と現場の確認が入るため、<br>人が受け続ける</li>
-          <li>権限の申請は承認の判断が入るため、<br>自動応答の対象から外す</li>
+          <li>パスワード再発行は手順が決まっており、担当者の判断を要しない</li>
+          <li>経費精算の差し戻しは、規程が定める5つの理由に収まる</li>
+          <li>残る6種別は現物の確認か承認の判断が入るため、<br>人が受け続ける</li>
         </ul>
       </div>
     </div>
@@ -193,29 +200,31 @@ wf_html = "".join(
 p4 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("工数の試算")}
-    <h1 class="title">一次対応の工数は月160時間から116時間まで落ちるが、例外処理は残る</h1>
+    <h1 class="title">自動応答を入れた場合、一次対応の工数は月160時間から116時間まで減る</h1>
     <div class="rule"></div>
     <div class="content">
-      <div class="chart-unit">一次対応にかかる工数、時間／月、自動応答を入れた場合の試算</div>
+      <div class="chart-unit">一次対応にかかる工数、時間／月、両方の種別を置き換えた場合の試算</div>
       <div class="twf">{wf_html}</div>
-      <div class="wf-legend"><span><i class="c-tot"></i>起点と着地</span><span><i class="c-down"></i>自動応答で減る分</span><span><i class="c-up"></i>新たに増える分</span></div>
+      <div class="wf-legend"><span><i class="c-tot"></i>現状と試算後</span><span><i class="c-down"></i>自動応答で減る分</span><span><i class="c-up"></i>新たに増える分</span></div>
     </div>
-    <footer class="footer"><span class="source">試算の前提：問い合わせは月800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。増える分は回答文の整備と例外の引き継ぎ</span><span>4</span></footer>
+    <footer class="footer"><span class="source">試算の前提：問い合わせは4〜7月の月平均800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。116時間は経費精算まで広げた12月以降の姿で、パスワード再発行だけの11月時点は約138時間</span><span>4</span></footer>
   </div>
 </section>"""
 
 # ── p5 案の比較 ───────────────────────────────────────────────────────
 cmp_cells = [
     ("head", "評価軸"), ("head", "現行のまま"), ("head", "手順書を書き直す"),
-    ("head", "自動応答を足す"), ("head", "読み取り"),
+    ("head", "自動応答を足す"), ("head", "示唆"),
     ("row-label", "初期の費用"), ("win", "0円"), ("", "20万円"), ("", "80万円"),
-    ("", "<ul><li>自動応答の80万円は、削れる工数44時間の2か月分で戻る</li></ul>"),
+    ("", "<ul><li>初期80万円と運用の月15万円は、月44時間の削減（人件費で約40万円）に対して3か月ほどで見合う</li></ul>"),
+    ("row-label", "運用の費用（月額）"), ("win", "0円"), ("win", "0円"), ("", "15万円"),
+    ("", "<ul><li>運用の月15万円は自動応答の利用料。手順書は書き直したあとの費用がかからない</li></ul>"),
     ("row-label", "着手から効果が出るまで"), ("na", "—"), ("", "3か月"), ("win", "1か月"),
-    ("", "<ul><li>手順書は書いても読まれず、件数が下がるまで時間がかかる</li></ul>"),
+    ("", "<ul><li>手順書の書き直しは、閲覧が伸びなければ件数に効かない</li></ul>"),
     ("row-label", "一次対応の工数"), ("", "160時間のまま"), ("", "140時間まで"), ("win", "116時間まで"),
-    ("", "<ul><li>工数が実際に落ちるのは自動応答だけ</li><li>手順書の書き直しは自動応答の回答文としても使える</li></ul>"),
-    ("row-label", "誤回答のリスク"), ("win", "なし"), ("win", "なし"), ("", "回答範囲を絞れば小さい"),
-    ("", "<ul><li>自動応答を選ぶなら、範囲を絞る手当てが前提になる</li></ul>"),
+    ("", "<ul><li>削減幅が最も大きいのは自動応答</li><li>116時間は経費精算まで広げた12月以降の値</li></ul>"),
+    ("row-label", "誤回答のリスク"), ("win", "現状のまま"), ("win", "現状のまま"), ("", "回答範囲を絞る前提"),
+    ("", "<ul><li>自動応答を選ぶなら、範囲を絞り人が確定する手当てが前提になる</li></ul>"),
 ]
 cmp_html = "".join(
     (f'<div class="{c}">{t}</div>' if c else f'<div>{t}</div>') for c, t in cmp_cells
@@ -223,10 +232,10 @@ cmp_html = "".join(
 p5 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("案の比較")}
-    <h1 class="title">既存のチャットに自動応答を足す案なら、費用も着手までの時間も小さい</h1>
+    <h1 class="title">自動応答は初期費用が最も高いが、工数の削減幅と着手の早さで上回る</h1>
     <div class="rule"></div>
     <div class="content"><div class="comparison">{cmp_html}</div></div>
-    <footer class="footer"><span class="source">注：費用と期間は3社への概算照会を模した仮置きの値。工数は前ページの試算、人件費は1時間9千円で換算。太字は評価軸ごとに勝っている案</span><span>5</span></footer>
+    <footer class="footer"><span class="source">注：費用と期間は仮置き。自動応答の工数は前ページの試算、手順書の140時間は実測がないため仮置き。人件費は1時間9千円で換算。太字は軸ごとに勝っている案</span><span>5</span></footer>
   </div>
 </section>"""
 
@@ -236,18 +245,18 @@ risks = [
      ["再問い合わせが週5件を超える", "未解決の申告が2割を超える"],
      ["回答の範囲をパスワード再発行の手順に絞る", "手順が変わった日に回答文を差し替える"],
      "情報システム部"),
-    ("社内の情報が回答文に混ざる",
-     ["回答文に個人名や口座番号が出る"],
-     ["参照先を公開済みの手順書だけに限る", "回答の確定は担当者が行う"],
+    ("回答文に社外秘の情報が入る",
+     ["参照先に未公開の資料が1件でも入る"],
+     ["参照先を公開済みの手順書だけに限る", "送信前に担当者が本文を確かめる"],
      "情報システム部と法務部"),
     ("手順書の更新が止まる",
      ["手順書の最終更新から3か月が過ぎる"],
      ["四半期ごとに手順書の棚卸しを行う", "更新の止まった手順は自動応答の対象から外す"],
-     "業務基盤グループ"),
-    ("利用が定着せず電話に戻る",
+     "情報システム部"),
+    ("利用者に定着せず、問い合わせが電話に戻る",
      ["チャット経由の比率が3割を下回る"],
-     ["電話の一次窓口を受付時間の後半に寄せる", "自動応答で解決した件数を月次で共有する"],
-     "業務基盤グループ"),
+     ["電話の窓口を受付時間の後半に移す", "自動応答で解決した件数を月次で共有する"],
+     "情報システム部"),
 ]
 
 
@@ -264,51 +273,51 @@ risk_rows = "".join(
 p6 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("リスクと対応")}
-    <h1 class="title">どのリスクも先に兆候が出るため、基準値を決めて手前で止める</h1>
+    <h1 class="title">どのリスクも兆候が先に出るため、基準値を決めれば手を打てる</h1>
     <div class="rule"></div>
     <div class="content"><table class="risk-table">
-      <thead><tr><th>起きうること</th><th>先に出る兆候</th><th>対応策</th><th>持つ部署</th></tr></thead>
+      <thead><tr><th>起きうること</th><th>先に出る兆候</th><th>対応策</th><th>担当部署</th></tr></thead>
       <tbody>{risk_rows}</tbody>
     </table></div>
-    <footer class="footer"><span class="source">注：兆候の基準値は10月の試験導入の実績を見て見直す</span><span>6</span></footer>
+    <footer class="footer"><span class="source">注：試験導入の対象は情報システム部の20名。基準値は10月の実績を見て見直す</span><span>6</span></footer>
   </div>
 </section>"""
 
 # ── p7 進め方 ─────────────────────────────────────────────────────────
 phases = [
-    ("9月", "対象と承認を決める", "パスワード再発行の手順書を1本に整え、回答を確定する担当者を決める",
+    ("9月", "対象と承認を決める", "パスワード再発行の手順書を1本にまとめ、回答を確定する担当者を決める",
      "手順書1本と承認の決定"),
-    ("10月", "情報システム部内で試す", "部内の20名で試し、誤回答の出方と対応にかかった時間を記録する",
+    ("10月", "部内で試験導入する", "部内の20名で使い、誤回答の出方と対応にかかった時間を記録する",
      "誤回答の記録と対応時間"),
-    ("11月", "全社に開放する", "パスワード再発行の問い合わせを自動応答に寄せ、電話の窓口を受付時間の後半に移す",
+    ("11月", "全社に開放する", "10月の誤回答が基準値を下回ることを確かめてから、全社の問い合わせを自動応答に回す",
      "自動応答で解決した件数"),
-    ("12月以降", "対象を広げる", "経費精算の差し戻しを足し、削れた工数の実績を運営会議で見る",
+    ("12月以降", "対象を広げる", "経費精算の差し戻しを足し、削れた工数を運営会議で確認する",
      "工数の実績と対象の判断"),
 ]
 phase_html = "".join(
     f'<div class="phase"><div class="phase-year">{y}</div>'
     f'<div class="phase-title">{t}</div><div class="phase-copy">{c}</div>'
-    f'<div class="phase-out">出るもの：{o}</div></div>'
+    f'<div class="phase-out">成果物：{o}</div></div>'
     for y, t, c, o in phases
 )
 p7 = f"""<section class="slide slide--no-title-rule">
   <div class="sinner">
 {slide_head("進め方")}
-    <h1 class="title">対象はパスワード再発行から始め、12月に経費精算の差し戻しへ広げる</h1>
+    <h1 class="title">対象はパスワード再発行から始め、12月以降に経費精算の差し戻しへ広げる</h1>
     <div class="rule"></div>
-    <div class="content"><div class="roadmap">{phase_html}</div></div>
-    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が兆候の基準値を下回ることを前提とする</span><span>7</span></footer>
+    <div class="content"><div class="rm-axis"></div><div class="roadmap">{phase_html}</div></div>
+    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が前ページの基準値を下回ることが条件</span><span>7</span></footer>
   </div>
 </section>"""
 
 # ── p8 決めること ─────────────────────────────────────────────────────
 decide = [
-    ("対象とする種別", "パスワード再発行から始め、経費精算の差し戻しを12月に足す", "情報システム部長",
-     ["10月の試験導入が11月以降にずれる", "問い合わせが増える3月に間に合わない"]),
-    ("承認の持ち方", "自動応答は下書きまでとし、回答の確定は担当者が行う", "情報システム部長と経理部長",
-     ["誤回答の責任の所在が決まらない", "内部監査で運用の記録を求められる"]),
-    ("費用枠", "初期の設定に80万円、運用に月15万円までとする", "情報システム部長",
-     ["見積の取得に入れない", "10月の着手ができない"]),
+    ("対象の種別", "パスワード再発行から始め、経費精算の差し戻しを12月以降に足す", "情報システム部長",
+     ["10月の試験導入が11月以降にずれる", "12月の対象追加が年明けにずれる"]),
+    ("承認の権限", "自動応答は下書きまでとし、回答の確定は担当者が行う", "情報システム部長と経理部長",
+     ["誤回答の責任の所在が決まらない", "運用の記録がないまま内部監査で提出を求められる"]),
+    ("費用枠", "初期費用に80万円、運用に月15万円までとする", "情報システム部長",
+     ["見積の依頼に着手できない", "10月の着手ができない"]),
 ]
 dec_rows = "".join(
     f'<tr><td class="ax">{a}</td><td>{b}</td><td>{c}</td>'
@@ -317,13 +326,13 @@ dec_rows = "".join(
 )
 p8 = f"""<section class="s">
 {s_head("決めること")}
-  <h1>今週決めるのは、対象とする種別と承認の持ち方と費用枠</h1>
+  <h1>今週決めるのは、対象の種別、承認の権限、費用枠</h1>
   <div class="c">
     <table>
-      <tr><th class="ax" style="width:40mm">決めること</th><th>事務局の案</th><th style="width:52mm">決める人</th><th style="width:72mm">先送りした場合に起きること</th></tr>
+      <tr><th class="ax" style="width:40mm">決めること</th><th>提案の内容</th><th style="width:52mm">決める人</th><th style="width:72mm">先送りした場合に起きること</th></tr>
       {dec_rows}
     </table>
-    <div class="src">注：費用枠は初期80万円、運用は月15万円を上限とする事務局案。決定は9月19日までに必要</div>
+    <div class="src">注：費用枠は初期80万円、運用は月15万円を上限とする案。決定は9月18日までに必要</div>
   </div>
 {s_foot(8)}
 </section>"""

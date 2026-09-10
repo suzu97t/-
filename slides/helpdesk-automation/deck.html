@@ -2001,6 +2001,9 @@
 .slide .title{margin-top:14px}
 
 /* ===== このデッキ側の調整（slide-rules 手順9: パーツのCSSはデッキ側で直してよい） ===== */
+/* 2つのパーツ集で版面が 3〜22px ずれるので、追加パーツ集（.slide）を基本パーツ集（.s）に合わせる（§4.19） */
+.slide .sinner{inset:56px 75.6px 28px 75.6px}
+.slide .title{margin-top:21px}
 /* エグゼクティブサマリー（現状→理由→打ち手の3段。§7.16） */
 .slide .es-grp{display:grid;grid-template-columns:160px 1fr;column-gap:32px;padding:22px 0;border-top:1px solid var(--rule);align-items:start}
 .slide .es-grp:first-child{border-top:0;padding-top:0}
@@ -2015,9 +2018,9 @@
 .s .hbar .fill{height:100%;background:var(--rule)}
 .s .hbar .fill.on{background:var(--accent)}
 .s .hbar .val{text-align:right;font-weight:700}
-/* 選択肢の比較表を5列にする（案3つ＋読み取り） */
-.slide .comparison{grid-template-columns:0.92fr 0.86fr 0.86fr 0.98fr 1.5fr}
-.slide .comparison > div{border-bottom:1px solid var(--hairline)}
+/* 選択肢の比較表を5列にする（案3つ＋示唆） */
+.slide .comparison{grid-template-columns:0.92fr 0.8fr 0.86fr 0.92fr 1.6fr}
+.slide .comparison > div{min-height:72px;border-bottom:1px solid var(--hairline)}
 .slide .comparison > div:nth-last-child(-n+5){border-bottom:0}
 .slide .comparison .na{background:var(--hairline);color:var(--muted)}
 .slide .comparison .win{font-weight:700}
@@ -2035,17 +2038,22 @@
 .slide .risk-table ul{margin:0;padding-left:18px}
 .slide .risk-table li{margin:0 0 6px}
 .slide .risk-table li:last-child{margin-bottom:0}
-/* 増減ブリッジの凡例（色を分けたら凡例を置く。§5.2） */
+/* 増減ブリッジ: 濃色＝自動応答が効く分（p3 の横棒と同じ意味）、起点と着地は淡色、増える分は白抜き */
+.slide .twf-bar.base,.slide .twf-bar.total{background:var(--rule)}
+.slide .twf-bar.down{background:var(--accent)}
+.slide .twf-bar.up{background:none;border:1.8px solid var(--ink)}
 .slide .wf-legend{display:flex;gap:30px;margin-top:20px;font-size:16px;color:var(--ink)}
 .slide .wf-legend span{display:flex;align-items:center;gap:8px}
 .slide .wf-legend i{width:16px;height:16px;display:inline-block}
-.slide .wf-legend .c-down{background:var(--cyan)}
-.slide .twf-bar.up{background:none;border:1.8px solid var(--ink)}
+.slide .wf-legend .c-tot{background:var(--rule)}
+.slide .wf-legend .c-down{background:var(--accent)}
 .slide .wf-legend .c-up{background:none;border:1.8px solid var(--ink)}
-.slide .wf-legend .c-tot{background:var(--ink)}
-/* ロードマップ: 説明文は本文と同じ濃さで読ませ、器を内容の高さに合わせる（§5.13 引き伸ばし禁止） */
+/* ロードマップ: 時間の向きを軸で示し、説明文は本文と同じ濃さで読ませる */
+.slide .rm-axis{position:relative;height:2px;background:var(--navy);margin-bottom:20px}
+.slide .rm-axis::after{content:"";position:absolute;right:-1px;top:-5px;border-top:6px solid transparent;border-bottom:6px solid transparent;border-left:12px solid var(--navy)}
 .slide .phase-copy{color:var(--ink)}
 .slide .phase{min-height:auto}
+.slide .phase:first-child{padding-left:0}
 .slide .phase-out{margin-top:16px;padding-top:12px;border-top:1px solid var(--hairline);font-size:17px;line-height:1.35}
 </style></head><body>
 <main class="deck skin-warm">
@@ -2059,21 +2067,21 @@
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">要約</div></div>
-    <h1 class="title">一次対応は自動応答に寄せ、情報システム部は例外と承認に残る</h1>
+    <h1 class="title">一次対応は自動応答に置き換え、情報システム部は例外と承認に残る</h1>
     <div class="rule"></div>
     <div class="content">
       <div class="es-grp"><div class="es-lab">現状</div><div class="es-body"><ul>
-        <li>問い合わせは月800件まで増えたが、一次対応は情報システム部の2名が兼務で受けている</li>
-        <li>初回の回答は7月に11.8時間まで遅れ、翌営業日にずれ込む案件が出ている</li>
+        <li>問い合わせは月平均800件で、一次対応は情報システム部の2名が兼務で受けている</li>
+        <li>初回の回答までの平均時間は7月に11.8時間まで伸び、1営業日を超えている</li>
       </ul></div></div>
       <div class="es-grp"><div class="es-lab">遅れの理由</div><div class="es-body"><ul>
         <li>件数の半分はパスワード再発行と経費精算の差し戻しで、どちらも手順が決まっている</li>
-        <li><strong>手順が決まった問い合わせを人が読んで返している間、判断が必要な案件が待たされている</strong></li>
+        <li><strong>手順が決まっている問い合わせを人が読んで返している間、判断が必要な問い合わせが待たされている</strong></li>
       </ul></div></div>
       <div class="es-grp"><div class="es-lab">打ち手と判断</div><div class="es-body"><ul>
-        <li>既存のチャットに自動応答を足してパスワード再発行から置き換えると、工数は月160時間から116時間まで落ちる</li>
-        <li>回答の確定は担当者が行い、例外処理と承認は情報システム部に残す</li>
-        <li>対象とする種別と承認の持ち方と費用枠を今週決める</li>
+        <li>既存のチャットに自動応答を足し、11月にパスワード再発行、12月以降に経費精算の差し戻しを置き換える</li>
+        <li>工数は月160時間から11月に約138時間、12月以降は116時間まで減り、例外処理と承認は情報システム部に残る</li>
+        <li>対象の種別、承認の権限、費用枠を今週決める</li>
       </ul></div></div>
     </div>
     <footer class="footer"><span class="source">注：架空の事例。数値は問い合わせ管理システムの記録を模した仮置きの値</span><span>1</span></footer>
@@ -2082,21 +2090,21 @@
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">回答までの時間</div></div>
-    <h1 class="title">初回の回答は7月に11.8時間まで遅れ、翌営業日にずれ込む案件が出ている</h1>
+    <h1 class="title">初回の回答までの平均時間は7月に11.8時間まで伸び、1営業日を超えた</h1>
     <div class="rule"></div>
     <div class="content"><div class="two-col">
-      <div><div class="section-label">初回の回答までの平均時間、営業時間、2026年</div>
+      <div><div class="section-label">初回の回答までの平均時間、時間、2026年</div>
         <div class="bar-chart"><div class="bar-wrap"><div class="bar-value">5.2</div><div class="bar" style="height:39%"></div><div class="bar-label">4月</div></div><div class="bar-wrap"><div class="bar-value">6.4</div><div class="bar" style="height:48%"></div><div class="bar-label">5月</div></div><div class="bar-wrap"><div class="bar-value">9.1</div><div class="bar" style="height:68%"></div><div class="bar-label">6月</div></div><div class="bar-wrap"><div class="bar-value">11.8</div><div class="bar" style="height:88%"></div><div class="bar-label">7月</div></div></div>
       </div>
       <div class="insight-panel"><div class="section-label">遅れが出ている理由</div>
         <ul class="bullets">
           <li>一次対応は情報システム部の2名が<br>他の業務と兼務で受けている</li>
-          <li>6月からは端末の入れ替えが重なり、<br>件数が1.3倍に増えている</li>
-          <li>手順が決まった問い合わせも、<br>担当者が本文を読んで返している</li>
+          <li>端末の入れ替えが重なる6月以降は、<br>件数が5月までの1.3倍に増えている</li>
+          <li>手順が決まっている問い合わせも、<br>担当者が本文を読んで返している</li>
         </ul>
       </div>
     </div></div>
-    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。営業時間は1日8時間で換算。数値は仮置き</span><span>2</span></footer>
+    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。時間は1日8時間の営業時間で換算。1.3倍は4〜5月と6〜7月の月平均の比。数値は仮置き</span><span>2</span></footer>
   </div>
 </section>
 <section class="s">
@@ -2107,15 +2115,14 @@
       <div>
         <div class="axh"><span>問い合わせの件数</span><span class="u">件／月、2026年4〜7月の平均</span></div>
         <div class="hbar"><div class="cat">パスワード再発行</div><div class="track"><div class="fill on" style="width:100.0%"></div></div><div class="val">240</div><div class="cat">経費精算の差し戻し</div><div class="track"><div class="fill on" style="width:66.7%"></div></div><div class="val">160</div><div class="cat">会議室と備品の貸出</div><div class="track"><div class="fill" style="width:38.3%"></div></div><div class="val">92</div><div class="cat">端末の不調</div><div class="track"><div class="fill" style="width:35.0%"></div></div><div class="val">84</div><div class="cat">権限の申請</div><div class="track"><div class="fill" style="width:31.7%"></div></div><div class="val">76</div><div class="cat">経費規程の確認</div><div class="track"><div class="fill" style="width:24.2%"></div></div><div class="val">58</div><div class="cat">ソフトウェアの導入依頼</div><div class="track"><div class="fill" style="width:19.2%"></div></div><div class="val">46</div><div class="cat">その他</div><div class="track"><div class="fill" style="width:18.3%"></div></div><div class="val">44</div></div>
-        <div class="legend left" style="margin-top:4mm"><span><i style="background:var(--accent)"></i>自動応答に寄せる種別</span><span><i style="background:var(--rule)"></i>人が受け続ける種別</span></div>
+        <div class="legend left" style="margin-top:4mm"><span><i style="background:var(--accent)"></i>自動応答に置き換える種別</span><span><i style="background:var(--rule)"></i>人が受け続ける種別</span></div>
       </div>
       <div>
-        <div class="colh">置き換えの向き不向き</div>
+        <div class="colh">置き換えの条件</div>
         <ul>
-          <li>パスワード再発行は手順が1本で、担当者の判断が入らない</li>
-          <li>経費精算の差し戻しは、理由が規程の5類型に収まる</li>
-          <li>端末の不調から下は現物と現場の確認が入るため、<br>人が受け続ける</li>
-          <li>権限の申請は承認の判断が入るため、<br>自動応答の対象から外す</li>
+          <li>パスワード再発行は手順が決まっており、担当者の判断を要しない</li>
+          <li>経費精算の差し戻しは、規程が定める5つの理由に収まる</li>
+          <li>残る6種別は現物の確認か承認の判断が入るため、<br>人が受け続ける</li>
         </ul>
       </div>
     </div>
@@ -2126,55 +2133,55 @@
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">工数の試算</div></div>
-    <h1 class="title">一次対応の工数は月160時間から116時間まで落ちるが、例外処理は残る</h1>
+    <h1 class="title">自動応答を入れた場合、一次対応の工数は月160時間から116時間まで減る</h1>
     <div class="rule"></div>
     <div class="content">
-      <div class="chart-unit">一次対応にかかる工数、時間／月、自動応答を入れた場合の試算</div>
+      <div class="chart-unit">一次対応にかかる工数、時間／月、両方の種別を置き換えた場合の試算</div>
       <div class="twf"><div class="twf-col"><div class="twf-value">160</div><div class="twf-bar base" style="height:260px;margin-bottom:0px"></div><div class="twf-label">現状の一次対応</div></div><div class="twf-col"><div class="twf-value">−34</div><div class="twf-bar down" style="height:55px;margin-bottom:205px"></div><div class="twf-label">パスワード再発行の自動応答</div></div><div class="twf-col"><div class="twf-value">−22</div><div class="twf-bar down" style="height:36px;margin-bottom:169px"></div><div class="twf-label">経費精算の差し戻しの自動応答</div></div><div class="twf-col"><div class="twf-value">+12</div><div class="twf-bar up" style="height:20px;margin-bottom:169px"></div><div class="twf-label">例外処理と回答文の整備</div></div><div class="twf-col"><div class="twf-value">116</div><div class="twf-bar total" style="height:188px;margin-bottom:0px"></div><div class="twf-label">自動応答を入れた場合</div></div></div>
-      <div class="wf-legend"><span><i class="c-tot"></i>起点と着地</span><span><i class="c-down"></i>自動応答で減る分</span><span><i class="c-up"></i>新たに増える分</span></div>
+      <div class="wf-legend"><span><i class="c-tot"></i>現状と試算後</span><span><i class="c-down"></i>自動応答で減る分</span><span><i class="c-up"></i>新たに増える分</span></div>
     </div>
-    <footer class="footer"><span class="source">試算の前提：問い合わせは月800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。増える分は回答文の整備と例外の引き継ぎ</span><span>4</span></footer>
+    <footer class="footer"><span class="source">試算の前提：問い合わせは4〜7月の月平均800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。116時間は経費精算まで広げた12月以降の姿で、パスワード再発行だけの11月時点は約138時間</span><span>4</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">案の比較</div></div>
-    <h1 class="title">既存のチャットに自動応答を足す案なら、費用も着手までの時間も小さい</h1>
+    <h1 class="title">自動応答は初期費用が最も高いが、工数の削減幅と着手の早さで上回る</h1>
     <div class="rule"></div>
-    <div class="content"><div class="comparison"><div class="head">評価軸</div><div class="head">現行のまま</div><div class="head">手順書を書き直す</div><div class="head">自動応答を足す</div><div class="head">読み取り</div><div class="row-label">初期の費用</div><div class="win">0円</div><div>20万円</div><div>80万円</div><div><ul><li>自動応答の80万円は、削れる工数44時間の2か月分で戻る</li></ul></div><div class="row-label">着手から効果が出るまで</div><div class="na">—</div><div>3か月</div><div class="win">1か月</div><div><ul><li>手順書は書いても読まれず、件数が下がるまで時間がかかる</li></ul></div><div class="row-label">一次対応の工数</div><div>160時間のまま</div><div>140時間まで</div><div class="win">116時間まで</div><div><ul><li>工数が実際に落ちるのは自動応答だけ</li><li>手順書の書き直しは自動応答の回答文としても使える</li></ul></div><div class="row-label">誤回答のリスク</div><div class="win">なし</div><div class="win">なし</div><div>回答範囲を絞れば小さい</div><div><ul><li>自動応答を選ぶなら、範囲を絞る手当てが前提になる</li></ul></div></div></div>
-    <footer class="footer"><span class="source">注：費用と期間は3社への概算照会を模した仮置きの値。工数は前ページの試算、人件費は1時間9千円で換算。太字は評価軸ごとに勝っている案</span><span>5</span></footer>
+    <div class="content"><div class="comparison"><div class="head">評価軸</div><div class="head">現行のまま</div><div class="head">手順書を書き直す</div><div class="head">自動応答を足す</div><div class="head">示唆</div><div class="row-label">初期の費用</div><div class="win">0円</div><div>20万円</div><div>80万円</div><div><ul><li>初期80万円と運用の月15万円は、月44時間の削減（人件費で約40万円）に対して3か月ほどで見合う</li></ul></div><div class="row-label">運用の費用（月額）</div><div class="win">0円</div><div class="win">0円</div><div>15万円</div><div><ul><li>運用の月15万円は自動応答の利用料。手順書は書き直したあとの費用がかからない</li></ul></div><div class="row-label">着手から効果が出るまで</div><div class="na">—</div><div>3か月</div><div class="win">1か月</div><div><ul><li>手順書の書き直しは、閲覧が伸びなければ件数に効かない</li></ul></div><div class="row-label">一次対応の工数</div><div>160時間のまま</div><div>140時間まで</div><div class="win">116時間まで</div><div><ul><li>削減幅が最も大きいのは自動応答</li><li>116時間は経費精算まで広げた12月以降の値</li></ul></div><div class="row-label">誤回答のリスク</div><div class="win">現状のまま</div><div class="win">現状のまま</div><div>回答範囲を絞る前提</div><div><ul><li>自動応答を選ぶなら、範囲を絞り人が確定する手当てが前提になる</li></ul></div></div></div>
+    <footer class="footer"><span class="source">注：費用と期間は仮置き。自動応答の工数は前ページの試算、手順書の140時間は実測がないため仮置き。人件費は1時間9千円で換算。太字は軸ごとに勝っている案</span><span>5</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">リスクと対応</div></div>
-    <h1 class="title">どのリスクも先に兆候が出るため、基準値を決めて手前で止める</h1>
+    <h1 class="title">どのリスクも兆候が先に出るため、基準値を決めれば手を打てる</h1>
     <div class="rule"></div>
     <div class="content"><table class="risk-table">
-      <thead><tr><th>起きうること</th><th>先に出る兆候</th><th>対応策</th><th>持つ部署</th></tr></thead>
-      <tbody><tr><td class="rl">自動応答が古い手順を返す</td><td><ul><li>再問い合わせが週5件を超える</li><li>未解決の申告が2割を超える</li></ul></td><td><ul><li>回答の範囲をパスワード再発行の手順に絞る</li><li>手順が変わった日に回答文を差し替える</li></ul></td><td>情報システム部</td></tr><tr><td class="rl">社内の情報が回答文に混ざる</td><td>回答文に個人名や口座番号が出る</td><td><ul><li>参照先を公開済みの手順書だけに限る</li><li>回答の確定は担当者が行う</li></ul></td><td>情報システム部と法務部</td></tr><tr><td class="rl">手順書の更新が止まる</td><td>手順書の最終更新から3か月が過ぎる</td><td><ul><li>四半期ごとに手順書の棚卸しを行う</li><li>更新の止まった手順は自動応答の対象から外す</li></ul></td><td>業務基盤グループ</td></tr><tr><td class="rl">利用が定着せず電話に戻る</td><td>チャット経由の比率が3割を下回る</td><td><ul><li>電話の一次窓口を受付時間の後半に寄せる</li><li>自動応答で解決した件数を月次で共有する</li></ul></td><td>業務基盤グループ</td></tr></tbody>
+      <thead><tr><th>起きうること</th><th>先に出る兆候</th><th>対応策</th><th>担当部署</th></tr></thead>
+      <tbody><tr><td class="rl">自動応答が古い手順を返す</td><td><ul><li>再問い合わせが週5件を超える</li><li>未解決の申告が2割を超える</li></ul></td><td><ul><li>回答の範囲をパスワード再発行の手順に絞る</li><li>手順が変わった日に回答文を差し替える</li></ul></td><td>情報システム部</td></tr><tr><td class="rl">回答文に社外秘の情報が入る</td><td>参照先に未公開の資料が1件でも入る</td><td><ul><li>参照先を公開済みの手順書だけに限る</li><li>送信前に担当者が本文を確かめる</li></ul></td><td>情報システム部と法務部</td></tr><tr><td class="rl">手順書の更新が止まる</td><td>手順書の最終更新から3か月が過ぎる</td><td><ul><li>四半期ごとに手順書の棚卸しを行う</li><li>更新の止まった手順は自動応答の対象から外す</li></ul></td><td>情報システム部</td></tr><tr><td class="rl">利用者に定着せず、問い合わせが電話に戻る</td><td>チャット経由の比率が3割を下回る</td><td><ul><li>電話の窓口を受付時間の後半に移す</li><li>自動応答で解決した件数を月次で共有する</li></ul></td><td>情報システム部</td></tr></tbody>
     </table></div>
-    <footer class="footer"><span class="source">注：兆候の基準値は10月の試験導入の実績を見て見直す</span><span>6</span></footer>
+    <footer class="footer"><span class="source">注：試験導入の対象は情報システム部の20名。基準値は10月の実績を見て見直す</span><span>6</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">進め方</div></div>
-    <h1 class="title">対象はパスワード再発行から始め、12月に経費精算の差し戻しへ広げる</h1>
+    <h1 class="title">対象はパスワード再発行から始め、12月以降に経費精算の差し戻しへ広げる</h1>
     <div class="rule"></div>
-    <div class="content"><div class="roadmap"><div class="phase"><div class="phase-year">9月</div><div class="phase-title">対象と承認を決める</div><div class="phase-copy">パスワード再発行の手順書を1本に整え、回答を確定する担当者を決める</div><div class="phase-out">出るもの：手順書1本と承認の決定</div></div><div class="phase"><div class="phase-year">10月</div><div class="phase-title">情報システム部内で試す</div><div class="phase-copy">部内の20名で試し、誤回答の出方と対応にかかった時間を記録する</div><div class="phase-out">出るもの：誤回答の記録と対応時間</div></div><div class="phase"><div class="phase-year">11月</div><div class="phase-title">全社に開放する</div><div class="phase-copy">パスワード再発行の問い合わせを自動応答に寄せ、電話の窓口を受付時間の後半に移す</div><div class="phase-out">出るもの：自動応答で解決した件数</div></div><div class="phase"><div class="phase-year">12月以降</div><div class="phase-title">対象を広げる</div><div class="phase-copy">経費精算の差し戻しを足し、削れた工数の実績を運営会議で見る</div><div class="phase-out">出るもの：工数の実績と対象の判断</div></div></div></div>
-    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が兆候の基準値を下回ることを前提とする</span><span>7</span></footer>
+    <div class="content"><div class="rm-axis"></div><div class="roadmap"><div class="phase"><div class="phase-year">9月</div><div class="phase-title">対象と承認を決める</div><div class="phase-copy">パスワード再発行の手順書を1本にまとめ、回答を確定する担当者を決める</div><div class="phase-out">成果物：手順書1本と承認の決定</div></div><div class="phase"><div class="phase-year">10月</div><div class="phase-title">部内で試験導入する</div><div class="phase-copy">部内の20名で使い、誤回答の出方と対応にかかった時間を記録する</div><div class="phase-out">成果物：誤回答の記録と対応時間</div></div><div class="phase"><div class="phase-year">11月</div><div class="phase-title">全社に開放する</div><div class="phase-copy">10月の誤回答が基準値を下回ることを確かめてから、全社の問い合わせを自動応答に回す</div><div class="phase-out">成果物：自動応答で解決した件数</div></div><div class="phase"><div class="phase-year">12月以降</div><div class="phase-title">対象を広げる</div><div class="phase-copy">経費精算の差し戻しを足し、削れた工数を運営会議で確認する</div><div class="phase-out">成果物：工数の実績と対象の判断</div></div></div></div>
+    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が前ページの基準値を下回ることが条件</span><span>7</span></footer>
   </div>
 </section>
 <section class="s">
   <div class="bar"><div class="logo">A社 情報システム部</div><div class="date">決めること</div></div>
-  <h1>今週決めるのは、対象とする種別と承認の持ち方と費用枠</h1>
+  <h1>今週決めるのは、対象の種別、承認の権限、費用枠</h1>
   <div class="c">
     <table>
-      <tr><th class="ax" style="width:40mm">決めること</th><th>事務局の案</th><th style="width:52mm">決める人</th><th style="width:72mm">先送りした場合に起きること</th></tr>
-      <tr><td class="ax">対象とする種別</td><td>パスワード再発行から始め、経費精算の差し戻しを12月に足す</td><td>情報システム部長</td><td><ul class="cb"><li>10月の試験導入が11月以降にずれる</li><li>問い合わせが増える3月に間に合わない</li></ul></td></tr><tr><td class="ax">承認の持ち方</td><td>自動応答は下書きまでとし、回答の確定は担当者が行う</td><td>情報システム部長と経理部長</td><td><ul class="cb"><li>誤回答の責任の所在が決まらない</li><li>内部監査で運用の記録を求められる</li></ul></td></tr><tr><td class="ax">費用枠</td><td>初期の設定に80万円、運用に月15万円までとする</td><td>情報システム部長</td><td><ul class="cb"><li>見積の取得に入れない</li><li>10月の着手ができない</li></ul></td></tr>
+      <tr><th class="ax" style="width:40mm">決めること</th><th>提案の内容</th><th style="width:52mm">決める人</th><th style="width:72mm">先送りした場合に起きること</th></tr>
+      <tr><td class="ax">対象の種別</td><td>パスワード再発行から始め、経費精算の差し戻しを12月以降に足す</td><td>情報システム部長</td><td><ul class="cb"><li>10月の試験導入が11月以降にずれる</li><li>12月の対象追加が年明けにずれる</li></ul></td></tr><tr><td class="ax">承認の権限</td><td>自動応答は下書きまでとし、回答の確定は担当者が行う</td><td>情報システム部長と経理部長</td><td><ul class="cb"><li>誤回答の責任の所在が決まらない</li><li>運用の記録がないまま内部監査で提出を求められる</li></ul></td></tr><tr><td class="ax">費用枠</td><td>初期費用に80万円、運用に月15万円までとする</td><td>情報システム部長</td><td><ul class="cb"><li>見積の依頼に着手できない</li><li>10月の着手ができない</li></ul></td></tr>
     </table>
-    <div class="src">注：費用枠は初期80万円、運用は月15万円を上限とする事務局案。決定は9月19日までに必要</div>
+    <div class="src">注：費用枠は初期80万円、運用は月15万円を上限とする案。決定は9月18日までに必要</div>
   </div>
   <div class="foot"><b>A社 情報システム部</b><span>8</span></div>
 </section>
