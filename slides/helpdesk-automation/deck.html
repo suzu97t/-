@@ -2004,6 +2004,15 @@
 /* 2つのパーツ集で版面が 3〜22px ずれるので、追加パーツ集（.slide）を基本パーツ集（.s）に合わせる（§4.19） */
 .slide .sinner{inset:56px 75.6px 28px 75.6px}
 .slide .title{margin-top:21px}
+/* 区分のタグチップ（全体マップで立てた軸を後続ページで運ぶ。§4.33） */
+.s .chips,.slide .chips{display:flex;align-items:center}
+.s .chips span{font-size:7.5pt;letter-spacing:.04em;color:var(--muted);border:1px solid var(--hairline);padding:0.6mm 1.8mm;margin-left:1.2mm}
+.s .chips span.on{background:var(--navy);border-color:var(--navy);color:#fff}
+.slide .chips span{font-size:12px;letter-spacing:.04em;color:var(--muted);border:1px solid var(--hairline);padding:3px 7px;margin-left:5px}
+.slide .chips span.on{background:var(--navy);border-color:var(--navy);color:#fff}
+/* 図（diagram-design）。文字はデッキの書体に揃える（1デッキ2書体まで。§1） */
+.s .dg{display:block;width:100%;height:auto;flex:0 0 auto}
+.s .dg text{font-family:var(--font-sans)}
 /* エグゼクティブサマリー（現状→理由→打ち手の3段。§7.16） */
 .slide .es-grp{display:grid;grid-template-columns:160px 1fr;column-gap:32px;padding:22px 0;border-top:1px solid var(--rule);align-items:start}
 .slide .es-grp:first-child{border-top:0;padding-top:0}
@@ -2038,7 +2047,7 @@
 .slide .risk-table ul{margin:0;padding-left:18px}
 .slide .risk-table li{margin:0 0 6px}
 .slide .risk-table li:last-child{margin-bottom:0}
-/* 増減ブリッジ: 濃色＝自動応答が効く分（p3 の横棒と同じ意味）、起点と着地は淡色、増える分は白抜き */
+/* 増減ブリッジ: 濃色＝自動応答が効く分（P.4 の横棒と同じ意味）、起点と着地は淡色、増える分は白抜き */
 .slide .twf-bar.base,.slide .twf-bar.total{background:var(--rule)}
 .slide .twf-bar.down{background:var(--accent)}
 .slide .twf-bar.up{background:none;border:1.8px solid var(--ink)}
@@ -2064,6 +2073,17 @@
   <div class="sub">情報システム部　運営会議　提出</div>
   <div class="foot"><b>A社 情報システム部</b><span></span></div>
 </section>
+<section class="s">
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date">全体マップ</div></div>
+  <h1>対象の絞り込みと人の確認の残し方が、この資料の論点</h1>
+  <div class="c">
+    <div class="rows">
+      <div class="r"><div class="l">1 現状と対象</div><div>問い合わせの半分は2種類に集まり、そこだけが自動応答に向く<span class="ref">→ P.3</span></div></div><div class="r"><div class="l">2 仕組み</div><div>自動応答は下書きまでを作り、送るのは担当者が確かめる<span class="ref">→ P.6</span></div></div><div class="r"><div class="l">3 効果と案</div><div>工数は月160時間から116時間まで減り、初期費用は3か月で見合う<span class="ref">→ P.8</span></div></div><div class="r"><div class="l">4 進め方と判断</div><div>10月に部内で試験導入し、11月に全社へ開放する<span class="ref">→ P.10</span></div></div>
+    </div>
+    <div class="src">注：架空の事例。数値は問い合わせ管理システムの記録を模した仮置きの値</div>
+  </div>
+  <div class="foot"><b>A社 情報システム部</b><span>1</span></div>
+</section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
     <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">要約</div></div>
@@ -2084,12 +2104,12 @@
         <li>対象の種別、承認の権限、費用枠を今週決める</li>
       </ul></div></div>
     </div>
-    <footer class="footer"><span class="source">注：架空の事例。数値は問い合わせ管理システムの記録を模した仮置きの値</span><span>1</span></footer>
+    <footer class="footer"><span class="source">注：架空の事例。数値は問い合わせ管理システムの記録を模した仮置きの値</span><span>2</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
-    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">回答までの時間</div></div>
+    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="on">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
     <h1 class="title">初回の回答までの平均時間は7月に11.8時間まで伸び、1営業日を超えた</h1>
     <div class="rule"></div>
     <div class="content"><div class="two-col">
@@ -2104,11 +2124,11 @@
         </ul>
       </div>
     </div></div>
-    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。時間は1日8時間の営業時間で換算。1.3倍は4〜5月と6〜7月の月平均の比。数値は仮置き</span><span>2</span></footer>
+    <footer class="footer"><span class="source">出典：問い合わせ管理システムの記録（2026年4〜7月）。時間は1日8時間の営業時間で換算。1.3倍は4〜5月と6〜7月の月平均の比。数値は仮置き</span><span>3</span></footer>
   </div>
 </section>
 <section class="s">
-  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date">問い合わせの内訳</div></div>
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="on">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
   <h1>問い合わせの半分は、パスワード再発行と経費精算の差し戻しに集まる</h1>
   <div class="c">
     <div class="two" style="grid-template-columns:1.7fr 1fr">
@@ -2120,7 +2140,7 @@
       <div>
         <div class="colh">置き換えの条件</div>
         <ul>
-          <li>パスワード再発行は手順が決まっており、担当者の判断を要しない</li>
+          <li>パスワード再発行は手順が決まっており、<br>担当者の判断を要しない</li>
           <li>経費精算の差し戻しは、規程が定める5つの理由に収まる</li>
           <li>残る6種別は現物の確認か承認の判断が入るため、<br>人が受け続ける</li>
         </ul>
@@ -2128,11 +2148,41 @@
     </div>
     <div class="src">出典：問い合わせ管理システムの記録（2026年4〜7月の月平均）。数値は仮置き</div>
   </div>
-  <div class="foot"><b>A社 情報システム部</b><span>3</span></div>
+  <div class="foot"><b>A社 情報システム部</b><span>4</span></div>
+</section>
+<section class="s">
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="on">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
+  <h1>件数が多く手順が定まった種別だけが、自動応答に向く</h1>
+  <div class="c">
+    <div class="axh"><span>問い合わせ種別の位置づけ</span><span class="u">縦は件／月、横は手順の定まり</span></div>
+    <svg class="dg" viewBox="0 0 1120 388" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="qd-title qd-desc"><title id="qd-title">自動応答に向く問い合わせ種別の位置づけ</title><desc id="qd-desc">縦軸は月あたりの件数、横軸は手順の定まり。右上にパスワード再発行と経費精算の差し戻しが位置し、ほかの6種別は手順の定まりが弱いか件数が少ない。</desc><defs><marker id="qd-arw" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a7b6b"/></marker><marker id="qd-arw-ac" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a3921"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><line x1="560" y1="328" x2="560" y2="48" stroke="#322014" stroke-width="1.2" marker-end="url(#qd-arw)"/><line x1="160" y1="184" x2="1000" y2="184" stroke="#322014" stroke-width="1.2" marker-end="url(#qd-arw)"/><text x="560" y="32" fill="#322014" font-size="12" font-weight="500" text-anchor="middle">件数</text><text x="1008" y="188" fill="#322014" font-size="12" font-weight="500" text-anchor="start">手順の定まり</text><text x="972" y="56" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="end">自動応答に向く</text><circle cx="880" cy="84" r="8" fill="#5a3921"/><text x="896" y="88" fill="#322014" font-size="12" font-weight="600" text-anchor="start">パスワード再発行</text><circle cx="768" cy="132" r="8" fill="#5a3921"/><text x="784" y="136" fill="#322014" font-size="12" font-weight="600" text-anchor="start">経費精算の差し戻し</text><circle cx="712" cy="232" r="8" fill="#8a7b6b"/><text x="728" y="236" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">会議室と備品の貸出</text><circle cx="456" cy="228" r="8" fill="#8a7b6b"/><text x="472" y="232" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">権限の申請</text><circle cx="352" cy="264" r="8" fill="#8a7b6b"/><text x="368" y="268" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">端末の不調</text><circle cx="516" cy="288" r="8" fill="#8a7b6b"/><text x="500" y="292" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="end">経費規程の確認</text><circle cx="296" cy="308" r="8" fill="#8a7b6b"/><text x="312" y="312" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">ソフトウェアの導入依頼</text><circle cx="232" cy="324" r="8" fill="#8a7b6b"/><text x="248" y="328" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">その他</text><line x1="0" y1="348" x2="1120" y2="348" stroke="rgba(50,32,20,0.12)" stroke-width="0.8"/><text x="0" y="372" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">凡例</text><circle cx="72" cy="368" r="8" fill="#5a3921"/><text x="88" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">自動応答に置き換える種別</text><circle cx="280" cy="368" r="8" fill="#8a7b6b"/><text x="296" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">人が受け続ける種別</text></svg>
+    <div class="src">出典：件数は問い合わせ管理システムの記録（2026年4〜7月の月平均）。手順の定まりは担当者2名への聞き取りによる。数値は仮置き</div>
+  </div>
+  <div class="foot"><b>A社 情報システム部</b><span>5</span></div>
+</section>
+<section class="s">
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="on">2 仕組み</span><span class="">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
+  <h1>自動応答は下書きまでを作り、送るのは担当者が確かめてから</h1>
+  <div class="c">
+    <div class="axh"><span>自動応答を入れたあとの一次対応の流れ</span><span class="u">パスワード再発行の場合</span></div>
+    <svg class="dg" viewBox="0 0 1120 388" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="sw-title sw-desc"><title id="sw-title">自動応答を入れたあとの一次対応の流れ</title><desc id="sw-desc">利用者・自動応答・担当者の3レーン。利用者の依頼を自動応答が判定して下書きを作り、担当者が確かめて送る。対象外の問い合わせは自動応答から担当者へ引き継ぐ。</desc><defs><marker id="sw-arw" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a7b6b"/></marker><marker id="sw-arw-ac" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a3921"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><line x1="0" y1="32" x2="1120" y2="32" stroke="rgba(50,32,20,0.20)" stroke-width="0.8"/><line x1="0" y1="120" x2="1120" y2="120" stroke="rgba(50,32,20,0.20)" stroke-width="0.8"/><line x1="0" y1="208" x2="1120" y2="208" stroke="rgba(50,32,20,0.20)" stroke-width="0.8"/><line x1="0" y1="296" x2="1120" y2="296" stroke="rgba(50,32,20,0.20)" stroke-width="0.8"/><text x="0" y="80" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">利用者</text><text x="0" y="168" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">自動応答</text><text x="0" y="256" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">担当者</text><path d="M 320,76 H 424 Q 432,76 432,84 V 140" fill="none" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#sw-arw)"/><line x1="512" y1="164" x2="544" y2="164" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#sw-arw)"/><path d="M 704,164 H 808 Q 816,164 816,172 V 228" fill="none" stroke="#5a3921" stroke-width="1.2" marker-end="url(#sw-arw-ac)"/><path d="M 896,252 H 1000 Q 1008,252 1008,244 V 100" fill="none" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#sw-arw)"/><path d="M 432,188 V 244 Q 432,252 440,252 H 736" fill="none" stroke="#8a7b6b" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#sw-arw)"/><rect x="360" y="52" width="32" height="16" fill="#ffffff"/><text x="376" y="64" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">依頼</text><rect x="734" y="140" width="44" height="16" fill="#ffffff"/><text x="756" y="152" fill="#5a3921" font-size="12" font-weight="500" text-anchor="middle">下書き</text><rect x="532" y="228" width="104" height="16" fill="#ffffff"/><text x="584" y="240" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">対象外は担当者へ</text><rect x="160" y="52" width="160" height="48" fill="#ffffff"/><rect x="160" y="52" width="160" height="48" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="240" y="80" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">チャットで依頼</text><rect x="352" y="140" width="160" height="48" fill="#ffffff"/><rect x="352" y="140" width="160" height="48" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="432" y="168" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">対象の種別か調べる</text><rect x="544" y="140" width="160" height="48" fill="#ffffff"/><rect x="544" y="140" width="160" height="48" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="624" y="160" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">手順書から</text><text x="624" y="176" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">下書きを作る</text><rect x="736" y="228" width="160" height="48" fill="#ffffff"/><rect x="736" y="228" width="160" height="48" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="816" y="256" fill="#5a3921" font-size="12" font-weight="600" text-anchor="middle">確かめて送る</text><rect x="928" y="52" width="160" height="48" fill="#ffffff"/><rect x="928" y="52" width="160" height="48" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="1008" y="80" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">回答を受け取る</text><line x1="0" y1="348" x2="1120" y2="348" stroke="rgba(50,32,20,0.12)" stroke-width="0.8"/><text x="0" y="372" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">凡例</text><rect x="64" y="360" width="16" height="16" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="88" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">担当者が確定する工程</text><line x1="248" y1="368" x2="272" y2="368" stroke="#8a7b6b" stroke-width="1" stroke-dasharray="4,3"/><text x="280" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">対象外の引き継ぎ</text></svg>
+    <div class="src">注：自動応答が回答を確定して送ることはない。対象外と判定した問い合わせは下書きを作らずに担当者へ引き継ぐ</div>
+  </div>
+  <div class="foot"><b>A社 情報システム部</b><span>6</span></div>
+</section>
+<section class="s">
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="on">2 仕組み</span><span class="">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
+  <h1>つくるのは自動応答と手順書の索引で、チャットは既存のまま</h1>
+  <div class="c">
+    <div class="axh"><span>自動応答の構成</span><span class="u">破線の枠が今回つくる範囲</span></div>
+    <svg class="dg" viewBox="0 0 1120 388" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="ar-title ar-desc"><title id="ar-title">自動応答の構成とつくる範囲</title><desc id="ar-desc">既存のチャットに自動応答をつなぎ、自動応答は公開済みの手順書の索引を参照して下書きを作る。担当者は確認画面で内容を確かめて送り、やり取りは記録に残る。</desc><defs><marker id="ar-arw" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a7b6b"/></marker><marker id="ar-arw-ac" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a3921"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><rect x="304" y="64" width="480" height="224" fill="rgba(50,32,20,0.02)" stroke="rgba(50,32,20,0.12)" stroke-width="0.8" stroke-dasharray="4,4"/><rect x="320" y="68" width="96" height="16" fill="#ffffff"/><text x="320" y="80" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">今回つくる範囲</text><line x1="232" y1="128" x2="336" y2="128" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#ar-arw)"/><line x1="536" y1="128" x2="568" y2="128" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#ar-arw)"/><line x1="768" y1="128" x2="832" y2="128" stroke="#5a3921" stroke-width="1.2" marker-end="url(#ar-arw-ac)"/><line x1="436" y1="160" x2="436" y2="216" stroke="#8a7b6b" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#ar-arw)"/><line x1="668" y1="160" x2="668" y2="216" stroke="#8a7b6b" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#ar-arw)"/><path d="M 932,160 V 308 Q 932,316 924,316 H 140 Q 132,316 132,308 V 160" fill="none" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#ar-arw)"/><rect x="250" y="104" width="68" height="16" fill="#ffffff"/><text x="284" y="116" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">問い合わせ</text><rect x="778" y="104" width="44" height="16" fill="#ffffff"/><text x="800" y="116" fill="#5a3921" font-size="12" font-weight="500" text-anchor="middle">下書き</text><rect x="444" y="184" width="32" height="16" fill="#ffffff"/><text x="448" y="196" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">参照</text><rect x="676" y="184" width="32" height="16" fill="#ffffff"/><text x="680" y="196" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">記録</text><rect x="492" y="292" width="80" height="16" fill="#ffffff"/><text x="532" y="304" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">確定した回答</text><rect x="32" y="96" width="200" height="64" fill="#ffffff"/><rect x="32" y="96" width="200" height="64" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="132" y="124" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">既存のチャット</text><text x="132" y="140" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="middle">利用者の窓口</text><rect x="336" y="96" width="200" height="64" fill="#ffffff"/><rect x="336" y="96" width="200" height="64" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="436" y="124" fill="#5a3921" font-size="12" font-weight="600" text-anchor="middle">自動応答</text><text x="436" y="140" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="middle">下書きを作る</text><rect x="568" y="96" width="200" height="64" fill="#ffffff"/><rect x="568" y="96" width="200" height="64" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="668" y="124" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">担当者の確認画面</text><text x="668" y="140" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="middle">直して送る</text><rect x="336" y="216" width="200" height="56" fill="#ffffff"/><rect x="336" y="216" width="200" height="56" fill="rgba(50,32,20,0.05)" stroke="#8a7b6b" stroke-width="1"/><text x="436" y="240" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">手順書の索引</text><text x="436" y="256" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="middle">公開済みだけ</text><rect x="568" y="216" width="200" height="56" fill="#ffffff"/><rect x="568" y="216" width="200" height="56" fill="rgba(50,32,20,0.05)" stroke="#8a7b6b" stroke-width="1"/><text x="668" y="240" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">やり取りの記録</text><text x="668" y="256" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="middle">監査で見る</text><rect x="832" y="96" width="200" height="64" fill="#ffffff"/><rect x="832" y="96" width="200" height="64" fill="#ffffff" stroke="#322014" stroke-width="1"/><circle cx="864" cy="116" r="8" fill="none" stroke="#322014" stroke-width="1.2"/><path d="M 852,140 a 12,12 0 0,1 24,0" fill="none" stroke="#322014" stroke-width="1.2"/><text x="888" y="124" fill="#322014" font-size="12" font-weight="600" text-anchor="start">担当者</text><text x="888" y="140" fill="#8a7b6b" font-size="12" font-weight="400" text-anchor="start">内容を確かめる</text><line x1="0" y1="348" x2="1120" y2="348" stroke="rgba(50,32,20,0.12)" stroke-width="0.8"/><text x="0" y="372" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">凡例</text><rect x="64" y="360" width="16" height="16" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="88" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">つくる自動応答</text><rect x="212" y="360" width="16" height="16" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="236" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">人が使う画面と担当者</text><rect x="396" y="360" width="16" height="16" fill="rgba(50,32,20,0.05)" stroke="#8a7b6b" stroke-width="1"/><text x="420" y="372" fill="#322014" font-size="12" font-weight="400" text-anchor="start">参照と保管</text></svg>
+    <div class="src">注：初期費用80万円は破線の枠の中の設定と接続の費用。手順書の索引は公開済みの手順書だけを取り込む</div>
+  </div>
+  <div class="foot"><b>A社 情報システム部</b><span>7</span></div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
-    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">工数の試算</div></div>
+    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="on">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
     <h1 class="title">自動応答を入れた場合、一次対応の工数は月160時間から116時間まで減る</h1>
     <div class="rule"></div>
     <div class="content">
@@ -2140,41 +2190,63 @@
       <div class="twf"><div class="twf-col"><div class="twf-value">160</div><div class="twf-bar base" style="height:260px;margin-bottom:0px"></div><div class="twf-label">現状の一次対応</div></div><div class="twf-col"><div class="twf-value">−34</div><div class="twf-bar down" style="height:55px;margin-bottom:205px"></div><div class="twf-label">パスワード再発行の自動応答</div></div><div class="twf-col"><div class="twf-value">−22</div><div class="twf-bar down" style="height:36px;margin-bottom:169px"></div><div class="twf-label">経費精算の差し戻しの自動応答</div></div><div class="twf-col"><div class="twf-value">+12</div><div class="twf-bar up" style="height:20px;margin-bottom:169px"></div><div class="twf-label">例外処理と回答文の整備</div></div><div class="twf-col"><div class="twf-value">116</div><div class="twf-bar total" style="height:188px;margin-bottom:0px"></div><div class="twf-label">自動応答を入れた場合</div></div></div>
       <div class="wf-legend"><span><i class="c-tot"></i>現状と試算後</span><span><i class="c-down"></i>自動応答で減る分</span><span><i class="c-up"></i>新たに増える分</span></div>
     </div>
-    <footer class="footer"><span class="source">試算の前提：問い合わせは4〜7月の月平均800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。116時間は経費精算まで広げた12月以降の姿で、パスワード再発行だけの11月時点は約138時間</span><span>4</span></footer>
+    <footer class="footer"><span class="source">試算の前提：問い合わせは4〜7月の月平均800件、一次対応は1件あたり12分、自動応答で解決する割合は実測がないため7割と仮置き。116時間は経費精算まで広げた12月以降の姿で、パスワード再発行だけの11月時点は約138時間</span><span>8</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
-    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">案の比較</div></div>
+    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="on">3 効果と案</span><span class="">4 進め方と判断</span></div></div></div>
     <h1 class="title">自動応答は初期費用が最も高いが、工数の削減幅と着手の早さで上回る</h1>
     <div class="rule"></div>
     <div class="content"><div class="comparison"><div class="head">評価軸</div><div class="head">現行のまま</div><div class="head">手順書を書き直す</div><div class="head">自動応答を足す</div><div class="head">示唆</div><div class="row-label">初期の費用</div><div class="win">0円</div><div>20万円</div><div>80万円</div><div><ul><li>初期80万円と運用の月15万円は、月44時間の削減（人件費で約40万円）に対して3か月ほどで見合う</li></ul></div><div class="row-label">運用の費用（月額）</div><div class="win">0円</div><div class="win">0円</div><div>15万円</div><div><ul><li>運用の月15万円は自動応答の利用料。手順書は書き直したあとの費用がかからない</li></ul></div><div class="row-label">着手から効果が出るまで</div><div class="na">—</div><div>3か月</div><div class="win">1か月</div><div><ul><li>手順書の書き直しは、閲覧が伸びなければ件数に効かない</li></ul></div><div class="row-label">一次対応の工数</div><div>160時間のまま</div><div>140時間まで</div><div class="win">116時間まで</div><div><ul><li>削減幅が最も大きいのは自動応答</li><li>116時間は経費精算まで広げた12月以降の値</li></ul></div><div class="row-label">誤回答のリスク</div><div class="win">現状のまま</div><div class="win">現状のまま</div><div>回答範囲を絞る前提</div><div><ul><li>自動応答を選ぶなら、範囲を絞り人が確定する手当てが前提になる</li></ul></div></div></div>
-    <footer class="footer"><span class="source">注：費用と期間は仮置き。自動応答の工数は前ページの試算、手順書の140時間は実測がないため仮置き。人件費は1時間9千円で換算。太字は軸ごとに勝っている案</span><span>5</span></footer>
+    <footer class="footer"><span class="source">注：費用と期間は仮置き。自動応答の工数は P.8 の試算、手順書の140時間は実測がないため仮置き。人件費は1時間9千円で換算。太字は軸ごとに勝っている案</span><span>9</span></footer>
   </div>
+</section>
+<section class="s">
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="on">4 進め方と判断</span></div></div></div>
+  <h1>対象と判断できない問い合わせは、自動応答が担当者に回す</h1>
+  <div class="c">
+    <div class="two" style="grid-template-columns:1.35fr 1fr">
+      <div>
+        <div class="axh"><span>自動応答が答えるかの判定</span><span class="u">問い合わせ1件ごと</span></div>
+        <svg class="dg" viewBox="0 0 640 400" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="fc-title fc-desc"><title id="fc-title">自動応答が答えるか担当者に回すかの判定</title><desc id="fc-desc">問い合わせが届いたら、対象の種別かを判定し、手順書が最新かを判定する。どちらかが否なら担当者が自分で調べて回答し、両方が是なら自動応答が下書きを作って担当者が送る。</desc><defs><marker id="fc-arw" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#8a7b6b"/></marker><marker id="fc-arw-ac" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto"><polygon points="0 0, 8 3, 0 6" fill="#5a3921"/></marker></defs><rect width="100%" height="100%" fill="#ffffff"/><line x1="200" y1="40" x2="200" y2="60" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#fc-arw)"/><line x1="200" y1="148" x2="200" y2="180" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#fc-arw)"/><line x1="200" y1="268" x2="200" y2="296" stroke="#5a3921" stroke-width="1.2" marker-end="url(#fc-arw-ac)"/><path d="M 288,104 H 352 Q 360,104 360,112 V 172 Q 360,180 368,180" fill="none" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#fc-arw)"/><path d="M 288,224 H 480 Q 488,224 488,216 V 208" fill="none" stroke="#8a7b6b" stroke-width="1.2" marker-end="url(#fc-arw)"/><rect x="208" y="156" width="32" height="16" fill="#ffffff"/><text x="212" y="168" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">はい</text><rect x="208" y="272" width="32" height="16" fill="#ffffff"/><text x="212" y="284" fill="#5a3921" font-size="12" font-weight="500" text-anchor="start">はい</text><rect x="298" y="80" width="44" height="16" fill="#ffffff"/><text x="320" y="92" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">いいえ</text><rect x="308" y="200" width="44" height="16" fill="#ffffff"/><text x="330" y="212" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="middle">いいえ</text><rect x="112" y="0" width="176" height="40" rx="20" fill="rgba(50,32,20,0.03)" stroke="rgba(50,32,20,0.30)" stroke-width="1"/><text x="200" y="24" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">問い合わせが届く</text><polygon points="200,60 288,104 200,148 112,104" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="200" y="108" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">対象の種別か</text><polygon points="200,180 288,224 200,268 112,224" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="200" y="220" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">手順書が</text><text x="200" y="236" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">最新か</text><rect x="112" y="296" width="176" height="48" fill="#ffffff"/><rect x="112" y="296" width="176" height="48" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="200" y="316" fill="#5a3921" font-size="12" font-weight="600" text-anchor="middle">下書きを作り</text><text x="200" y="332" fill="#5a3921" font-size="12" font-weight="600" text-anchor="middle">担当者が送る</text><rect x="368" y="152" width="240" height="56" fill="#ffffff"/><rect x="368" y="152" width="240" height="56" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="488" y="176" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">担当者が自分で</text><text x="488" y="192" fill="#322014" font-size="12" font-weight="600" text-anchor="middle">調べて回答する</text><line x1="0" y1="360" x2="640" y2="360" stroke="rgba(50,32,20,0.12)" stroke-width="0.8"/><text x="0" y="384" fill="#8a7b6b" font-size="12" font-weight="500" text-anchor="start">凡例</text><rect x="64" y="372" width="16" height="16" fill="rgba(90,57,33,0.10)" stroke="#5a3921" stroke-width="1.2"/><text x="88" y="384" fill="#322014" font-size="12" font-weight="400" text-anchor="start">自動応答が下書きを作る経路</text><rect x="284" y="372" width="16" height="16" fill="#ffffff" stroke="#322014" stroke-width="1"/><text x="308" y="384" fill="#322014" font-size="12" font-weight="400" text-anchor="start">担当者が受ける経路</text></svg>
+      </div>
+      <div>
+        <div class="colh">担当者に回す条件</div>
+        <ul>
+          <li>対象の種別でない問い合わせは、<br>自動応答が下書きを作らない</li>
+          <li>手順書の更新が3か月止まっていれば、<br>その手順を対象から外す</li>
+          <li>下書きを作った場合も、<br>担当者が確かめてから送る</li>
+        </ul>
+      </div>
+    </div>
+    <div class="src">注：判定の基準値は10月の試験導入の実績を見て見直す。判定に迷った問い合わせは担当者に回す側に倒す</div>
+  </div>
+  <div class="foot"><b>A社 情報システム部</b><span>10</span></div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
-    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">リスクと対応</div></div>
+    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="on">4 進め方と判断</span></div></div></div>
     <h1 class="title">どのリスクも兆候が先に出るため、基準値を決めれば手を打てる</h1>
     <div class="rule"></div>
     <div class="content"><table class="risk-table">
       <thead><tr><th>起きうること</th><th>先に出る兆候</th><th>対応策</th><th>担当部署</th></tr></thead>
       <tbody><tr><td class="rl">自動応答が古い手順を返す</td><td><ul><li>再問い合わせが週5件を超える</li><li>未解決の申告が2割を超える</li></ul></td><td><ul><li>回答の範囲をパスワード再発行の手順に絞る</li><li>手順が変わった日に回答文を差し替える</li></ul></td><td>情報システム部</td></tr><tr><td class="rl">回答文に社外秘の情報が入る</td><td>参照先に未公開の資料が1件でも入る</td><td><ul><li>参照先を公開済みの手順書だけに限る</li><li>送信前に担当者が本文を確かめる</li></ul></td><td>情報システム部と法務部</td></tr><tr><td class="rl">手順書の更新が止まる</td><td>手順書の最終更新から3か月が過ぎる</td><td><ul><li>四半期ごとに手順書の棚卸しを行う</li><li>更新の止まった手順は自動応答の対象から外す</li></ul></td><td>情報システム部</td></tr><tr><td class="rl">利用者に定着せず、問い合わせが電話に戻る</td><td>チャット経由の比率が3割を下回る</td><td><ul><li>電話の窓口を受付時間の後半に移す</li><li>自動応答で解決した件数を月次で共有する</li></ul></td><td>情報システム部</td></tr></tbody>
     </table></div>
-    <footer class="footer"><span class="source">注：試験導入の対象は情報システム部の20名。基準値は10月の実績を見て見直す</span><span>6</span></footer>
+    <footer class="footer"><span class="source">注：試験導入の対象は情報システム部の20名。基準値は10月の実績を見て見直す</span><span>11</span></footer>
   </div>
 </section>
 <section class="slide slide--no-title-rule">
   <div class="sinner">
-    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date">進め方</div></div>
+    <div class="hdr"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="on">4 進め方と判断</span></div></div></div>
     <h1 class="title">対象はパスワード再発行から始め、12月以降に経費精算の差し戻しへ広げる</h1>
     <div class="rule"></div>
     <div class="content"><div class="rm-axis"></div><div class="roadmap"><div class="phase"><div class="phase-year">9月</div><div class="phase-title">対象と承認を決める</div><div class="phase-copy">パスワード再発行の手順書を1本にまとめ、回答を確定する担当者を決める</div><div class="phase-out">成果物：手順書1本と承認の決定</div></div><div class="phase"><div class="phase-year">10月</div><div class="phase-title">部内で試験導入する</div><div class="phase-copy">部内の20名で使い、誤回答の出方と対応にかかった時間を記録する</div><div class="phase-out">成果物：誤回答の記録と対応時間</div></div><div class="phase"><div class="phase-year">11月</div><div class="phase-title">全社に開放する</div><div class="phase-copy">10月の誤回答が基準値を下回ることを確かめてから、全社の問い合わせを自動応答に回す</div><div class="phase-out">成果物：自動応答で解決した件数</div></div><div class="phase"><div class="phase-year">12月以降</div><div class="phase-title">対象を広げる</div><div class="phase-copy">経費精算の差し戻しを足し、削れた工数を運営会議で確認する</div><div class="phase-out">成果物：工数の実績と対象の判断</div></div></div></div>
-    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が前ページの基準値を下回ることが条件</span><span>7</span></footer>
+    <footer class="footer"><span class="source">注：11月の全社開放は、10月の試験導入で誤回答が P.11 の基準値を下回ることが条件</span><span>12</span></footer>
   </div>
 </section>
 <section class="s">
-  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date">決めること</div></div>
+  <div class="bar"><div class="logo">A社 情報システム部</div><div class="date"><div class="chips"><span class="">1 現状と対象</span><span class="">2 仕組み</span><span class="">3 効果と案</span><span class="on">4 進め方と判断</span></div></div></div>
   <h1>今週決めるのは、対象の種別、承認の権限、費用枠</h1>
   <div class="c">
     <table>
@@ -2183,13 +2255,13 @@
     </table>
     <div class="src">注：費用枠は初期80万円、運用は月15万円を上限とする案。決定は9月18日までに必要</div>
   </div>
-  <div class="foot"><b>A社 情報システム部</b><span>8</span></div>
+  <div class="foot"><b>A社 情報システム部</b><span>13</span></div>
 </section>
 <section class="s cover">
   <div class="bar"><div class="logo">A社 情報システム部</div><div class="date">2026年9月17日</div></div>
   <div class="big" style="margin-top:60mm;font-size:22pt">A社 情報システム部 業務基盤グループ</div>
   <div class="sub">内線 2431／helpdesk-pj@example.co.jp</div>
-  <div class="src" style="position:absolute;left:16mm;bottom:14mm">本資料は consulting-pptx-skill（github.com/carnot-tech/consulting-pptx-skill）で作成</div>
+  <div class="src" style="position:absolute;left:16mm;bottom:14mm">本資料は consulting-pptx-skill（github.com/carnot-tech/consulting-pptx-skill）と diagram-design（github.com/cathrynlavery/diagram-design）で作成</div>
   <div class="foot"><b>A社 情報システム部</b><span></span></div>
 </section>
 </main>
