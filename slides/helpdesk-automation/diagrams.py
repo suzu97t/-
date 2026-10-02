@@ -18,6 +18,7 @@ TINT = "rgba(90,57,33,0.10)"
 STORE = "rgba(50,32,20,0.05)"
 EXT_FILL = "rgba(50,32,20,0.03)"
 EXT_STROKE = "rgba(50,32,20,0.30)"
+RULE = "#c5a681"
 HAIR = "rgba(50,32,20,0.12)"
 
 
@@ -102,8 +103,16 @@ def _legend(y, items, width=1120):
             out.append(f'<rect x="{x}" y="{cy - 8}" width="16" height="16" fill="{EXT_FILL}" stroke="{EXT_STROKE}" stroke-width="1"/>')
         elif kind == "dot-accent":
             out.append(f'<circle cx="{x + 8}" cy="{cy}" r="8" fill="{ACCENT}"/>')
-        elif kind == "dot-muted":
-            out.append(f'<circle cx="{x + 8}" cy="{cy}" r="8" fill="{MUTED}"/>')
+        elif kind == "dot-rule":
+            out.append(f'<circle cx="{x + 8}" cy="{cy}" r="8" fill="{RULE}"/>')
+        elif kind == "thick":
+            out.append(f'<rect x="{x}" y="{cy - 8}" width="16" height="16" fill="{PAPER}" stroke="{INK}" stroke-width="2.4"/>')
+        elif kind == "dotted-box":
+            out.append(f'<rect x="{x}" y="{cy - 8}" width="16" height="16" fill="rgba(50,32,20,0.02)" '
+                       f'stroke="rgba(50,32,20,0.40)" stroke-width="1" stroke-dasharray="2,3"/>')
+        elif kind == "diamond":
+            out.append(f'<polygon points="{x + 8},{cy - 8} {x + 16},{cy} {x + 8},{cy + 8} {x},{cy}" '
+                       f'fill="{PAPER}" stroke="{INK}" stroke-width="1"/>')
         elif kind == "dash":
             out.append(f'<line x1="{x}" y1="{cy}" x2="{x + 24}" y2="{cy}" stroke="{MUTED}" '
                        f'stroke-width="1" stroke-dasharray="4,3"/>')
@@ -120,28 +129,28 @@ def quadrant():
     pid = "qd"
     o = [_open(pid, 1120, 388,
                "自動応答に向く問い合わせ種別の位置づけ",
-               "縦軸は月あたりの件数、横軸は手順の定まり。右上にパスワード再発行と経費精算の差し戻しが位置し、"
-               "ほかの6種別は手順の定まりが弱いか件数が少ない。")]
+               "縦軸は月あたりの件数で、横線は120件。横軸は手順が決まっている度合い。"
+               "右上にパスワード再発行と経費精算の差し戻しが位置し、ほかの6種別は件数が少ないか手順が定まらない。")]
     o.append(f'<line x1="560" y1="328" x2="560" y2="48" stroke="{INK}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
-    o.append(f'<line x1="160" y1="184" x2="1000" y2="184" stroke="{INK}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
+    o.append(f'<line x1="160" y1="200" x2="960" y2="200" stroke="{INK}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
     o.append(_txt(560, 32, "件数", 12, INK, 500))
-    o.append(_txt(1008, 188, "手順の定まり", 12, INK, 500, "start"))
-    o.append(_txt(972, 56, "自動応答に向く", 12, MUTED, 500, "end"))
+    o.append(_txt(968, 204, "手順が決まっている", 12, INK, 500, "start"))
+    o.append(_txt(944, 56, "自動応答に向く", 12, MUTED, 500, "end"))
+    o.append(_txt(176, 316, "件数が少ないか手順が定まらない", 12, MUTED, 500, "start"))
     items = [
-        (880, 84, "パスワード再発行", "start", True),
-        (768, 132, "経費精算の差し戻し", "start", True),
-        (712, 232, "会議室と備品の貸出", "start", False),
-        (456, 228, "権限の申請", "start", False),
-        (352, 264, "端末の不調", "start", False),
-        (516, 288, "経費規程の確認", "end", False),
-        (296, 308, "ソフトウェアの導入依頼", "start", False),
-        (232, 324, "その他", "start", False),
+        (880, 80, "パスワード再発行", "start", True),
+        (768, 160, "経費精算の差し戻し", "start", True),
+        (712, 228, "会議室と備品の貸出", "start", False),
+        (336, 236, "端末の不調", "start", False),
+        (456, 244, "権限の申請", "start", False),
+        (648, 264, "経費規程の確認", "start", False),
+        (296, 276, "ソフトウェアの導入依頼", "start", False),
+        (216, 276, "その他", "start", False),
     ]
     for x, y, label, anchor, focal in items:
-        o.append(f'<circle cx="{x}" cy="{y}" r="8" fill="{ACCENT if focal else MUTED}"/>')
-        lx = x + 16 if anchor == "start" else x - 16
-        o.append(_txt(lx, y + 4, label, 12, INK if focal else MUTED, 600 if focal else 400, anchor))
-    o.append(_legend(348, [("dot-accent", "自動応答に置き換える種別"), ("dot-muted", "人が受け続ける種別")]))
+        o.append(f'<circle cx="{x}" cy="{y}" r="8" fill="{ACCENT if focal else RULE}"/>')
+        o.append(_txt(x + 16, y + 4, label, 12, INK if focal else MUTED, 600 if focal else 400, "start"))
+    o.append(_legend(348, [("dot-accent", "自動応答に置き換える種別"), ("dot-rule", "人が受け続ける種別")]))
     o.append("</svg>")
     return "".join(o)
 
@@ -154,7 +163,7 @@ def swimlane():
     o = [_open(pid, 1120, 388,
                "自動応答を入れたあとの一次対応の流れ",
                "利用者・自動応答・担当者の3レーン。利用者の依頼を自動応答が判定して下書きを作り、"
-               "担当者が確かめて送る。対象外の問い合わせは自動応答から担当者へ引き継ぐ。")]
+               "担当者が確かめて送る。対象外と判定した問い合わせは、担当者が自分で調べて回答する。")]
     for y in (32, 120, 208, 296):
         o.append(f'<line x1="0" y1="{y}" x2="1120" y2="{y}" stroke="rgba(50,32,20,0.20)" stroke-width="0.8"/>')
     for name, cy in (("利用者", 76), ("自動応答", 164), ("担当者", 252)):
@@ -163,21 +172,28 @@ def swimlane():
     o.append(f'<path d="M 320,76 H 424 Q 432,76 432,84 V 140" fill="none" stroke="{MUTED}" '
              f'stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
     o.append(f'<line x1="512" y1="164" x2="544" y2="164" stroke="{MUTED}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
-    o.append(f'<path d="M 704,164 H 808 Q 816,164 816,172 V 228" fill="none" stroke="{ACCENT}" '
-             f'stroke-width="1.2" marker-end="url(#{pid}-arw-ac)"/>')
+    o.append(f'<path d="M 704,164 H 808 Q 816,164 816,172 V 228" fill="none" stroke="{MUTED}" '
+             f'stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
     o.append(f'<path d="M 896,252 H 1000 Q 1008,252 1008,244 V 100" fill="none" stroke="{MUTED}" '
              f'stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
-    o.append(f'<path d="M 432,188 V 244 Q 432,252 440,252 H 736" fill="none" stroke="{MUTED}" '
-             f'stroke-width="1" stroke-dasharray="4,3" marker-end="url(#{pid}-arw)"/>')
+    o.append(f'<line x1="432" y1="188" x2="432" y2="228" stroke="{MUTED}" stroke-width="1" '
+             f'stroke-dasharray="4,3" marker-end="url(#{pid}-arw)"/>')
+    o.append(f'<path d="M 432,276 V 280 Q 432,288 440,288 H 1032 Q 1040,288 1040,280 V 100" fill="none" '
+             f'stroke="{MUTED}" stroke-width="1" stroke-dasharray="4,3" marker-end="url(#{pid}-arw)"/>')
     o.append(_alabel(376, 76, "依頼"))
-    o.append(_alabel(756, 164, "下書き", ACCENT))
-    o.append(_alabel(584, 252, "対象外は担当者へ"))
+    o.append(_alabel(756, 164, "下書き"))
+    o.append(_vlabel(432, 208, "対象外"))
+    o.append(_alabel(624, 288, "担当者からの回答"))
     o.append(_node(160, 52, 160, 48, ["チャットで依頼"]))
-    o.append(_node(352, 140, 160, 48, ["対象の種別か調べる"]))
-    o.append(_node(544, 140, 160, 48, ["手順書から", "下書きを作る"], sub=False))
-    o.append(_node(736, 228, 160, 48, ["確かめて送る"], "focal"))
+    o.append(_node(352, 140, 160, 48, ["対象の種別か調べる"], "focal"))
+    o.append(_node(544, 140, 160, 48, ["手順書から", "下書きを作る"], "focal", sub=False))
+    o.append(_node(352, 228, 160, 48, ["自分で調べて回答する"]))
+    o.append(f'<rect x="736" y="228" width="160" height="48" fill="{PAPER}"/>')
+    o.append(f'<rect x="736" y="228" width="160" height="48" fill="{PAPER}" stroke="{INK}" stroke-width="2.4"/>')
+    o.append(_txt(816, 256, "確かめて送る", 12, INK, 600))
     o.append(_node(928, 52, 160, 48, ["回答を受け取る"]))
-    o.append(_legend(348, [("accent", "担当者が確定する工程"), ("dash", "対象外の引き継ぎ")]))
+    o.append(_legend(348, [("accent", "自動応答が処理する工程"), ("thick", "担当者が確定する工程"),
+                           ("dash", "対象外の流れ")]))
     o.append("</svg>")
     return "".join(o)
 
@@ -193,9 +209,9 @@ def architecture():
                "担当者は確認画面で内容を確かめて送り、やり取りは記録に残る。")]
     # ゾーン（背景→ゾーン→矢印→ラベル→ノードの順）
     o.append(f'<rect x="304" y="64" width="480" height="224" fill="rgba(50,32,20,0.02)" '
-             f'stroke="{HAIR}" stroke-width="0.8" stroke-dasharray="4,4"/>')
+             f'stroke="rgba(50,32,20,0.40)" stroke-width="1" stroke-dasharray="2,3"/>')
     o.append(f'<rect x="320" y="68" width="96" height="16" fill="{PAPER}"/>')
-    o.append(_txt(320, 80, "今回つくる範囲", 12, MUTED, 500, "start"))
+    o.append(_txt(320, 80, "今回作る範囲", 12, MUTED, 500, "start"))
     # 矢印
     o.append(f'<line x1="232" y1="128" x2="336" y2="128" stroke="{MUTED}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
     o.append(f'<line x1="536" y1="128" x2="568" y2="128" stroke="{MUTED}" stroke-width="1.2" marker-end="url(#{pid}-arw)"/>')
@@ -215,7 +231,7 @@ def architecture():
     # ノード
     o.append(_node(32, 96, 200, 64, ["既存のチャット", "利用者の窓口"]))
     o.append(_node(336, 96, 200, 64, ["自動応答", "下書きを作る"], "focal"))
-    o.append(_node(568, 96, 200, 64, ["担当者の確認画面", "直して送る"]))
+    o.append(_node(568, 96, 200, 64, ["担当者の確認画面", "確かめて送る"]))
     o.append(_node(336, 216, 200, 56, ["手順書の索引", "公開済みだけ"], "store"))
     o.append(_node(568, 216, 200, 56, ["やり取りの記録", "監査で見る"], "store"))
     # 担当者は人なので単色アイコン＋ラベルで表す（slide-rules §4.32）
@@ -225,8 +241,8 @@ def architecture():
     o.append(f'<path d="M 852,140 a 12,12 0 0,1 24,0" fill="none" stroke="{INK}" stroke-width="1.2"/>')
     o.append(_txt(888, 124, "担当者", 12, INK, 600, "start"))
     o.append(_txt(888, 140, "内容を確かめる", 12, MUTED, 400, "start"))
-    o.append(_legend(348, [("accent", "つくる自動応答"), ("white", "人が使う画面と担当者"),
-                           ("store", "参照と保管")]))
+    o.append(_legend(348, [("dotted-box", "今回作る範囲"), ("accent", "自動応答"),
+                           ("white", "人が使う画面と担当者"), ("store", "参照と保管")]))
     o.append("</svg>")
     return "".join(o)
 
@@ -267,8 +283,9 @@ def flowchart():
         else:
             o.append(_txt(200, cy + 4, l1, 12, INK, 600))
     # 工程
-    o.append(_node(112, 296, 176, 48, ["下書きを作り", "担当者が送る"], "focal", sub=False))
-    o.append(_node(368, 152, 240, 56, ["担当者が自分で", "調べて回答する"], sub=False))
-    o.append(_legend(360, [("accent", "自動応答が下書きを作る経路"), ("white", "担当者が受ける経路")], w))
+    o.append(_node(112, 296, 176, 48, ["下書きを作り", "担当者が確かめて送る"], "focal", sub=False))
+    o.append(_node(368, 152, 240, 56, ["担当者が自分で", "調べて回答する"], "store", sub=False))
+    o.append(_legend(360, [("accent", "自動応答が処理する工程"), ("store", "担当者が処理する工程"),
+                           ("diamond", "判定")], w))
     o.append("</svg>")
     return "".join(o)
