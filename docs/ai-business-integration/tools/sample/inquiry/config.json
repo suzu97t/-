@@ -1,0 +1,12 @@
+{
+  "name": "問い合わせメールの分類と振り分け",
+  "keys": ["inquiry_id"],
+  "segment": "channel",
+  "review_column": "needs_review",
+  "missing_severity": "致命的",
+  "fields": {
+    "category": {"label": "問い合わせの種類", "severity": "重大"},
+    "priority": {"label": "緊急度",           "severity": "致命的"},
+    "team":     {"label": "担当チーム",       "severity": "軽微"}
+  }
+}

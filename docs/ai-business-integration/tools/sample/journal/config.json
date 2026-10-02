@@ -1,0 +1,15 @@
+{
+  "name": "仕訳入力（請求書の明細ごとの仕訳）",
+  "keys": ["doc_id", "line_no"],
+  "group_by": "doc_id",
+  "segment": "segment",
+  "review_column": "needs_review",
+  "missing_severity": "致命的",
+  "fields": {
+    "account":      {"label": "勘定科目", "severity": "重大"},
+    "sub_account":  {"label": "補助科目", "severity": "軽微"},
+    "department":   {"label": "部門",     "severity": "軽微"},
+    "tax_category": {"label": "税区分",   "severity": "致命的"},
+    "amount":       {"label": "金額",     "severity": "致命的", "type": "number"}
+  }
+}

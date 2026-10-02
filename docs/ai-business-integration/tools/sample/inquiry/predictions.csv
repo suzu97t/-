@@ -1,0 +1,12 @@
+inquiry_id,category,priority,team,needs_review
+Q-001,ログイン・パスワード,中,サポート,false
+Q-002,請求・支払,中,経理窓口,false
+Q-003,障害報告,高,技術サポート,false
+Q-004,機能の使い方,低,サポート,false
+Q-005,契約内容の変更,中,営業,false
+Q-006,要望,低,サポート,false
+Q-007,請求・支払,中,サポート,false
+Q-008,機能の使い方,低,サポート,true
+Q-009,要望,低,プロダクト,false
+Q-010,契約内容の変更,中,営業,false
+Q-012,その他,低,サポート,true

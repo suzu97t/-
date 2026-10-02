@@ -1,4 +1,4 @@
-doc_id,line_no,segment,account,sub_account,department,tax_category,amount,acceptable_accounts,note
+doc_id,line_no,segment,account,sub_account,department,tax_category,amount,acceptable_account,note
 INV-0001,1,型A 毎月定額,通信費,クラウド利用料,情報システム部,課税仕入10%,100000,,
 INV-0002,1,型A 毎月定額,地代家賃,本社,管理部,課税仕入10%,600000,,
 INV-0003,1,型A 毎月定額,通信費,電話料,管理部,課税仕入10%,48000,,
