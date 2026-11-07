@@ -1,0 +1,1676 @@
+<title>キキガキ</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Shippori+Mincho+B1:wght@500;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap">
+<style>
+/* Layout: 野帳（フィールドノート）の見開き。左で聞き取り、右の方眼ノートに書き留める。上にマップのステップ列。 */
+:root{
+  --paper:#EDF0EC;
+  --sheet:#FAFBF8;
+  --ink:#1C2628;
+  --ink-2:#435053;
+  --ink-3:#6B787A;
+  --rule:#D2DAD4;
+  --grid:rgba(44,74,128,.075);
+  --ai:#2C4A80;
+  --ai-ink:#FFFFFF;
+  --ai-soft:#E1E8F3;
+  --fork:#B93C28;
+  --fork-soft:#F6E1DB;
+  --hypo:#8A5F06;
+  --hypo-soft:#F4EACD;
+  --hypo-line:#C2942A;
+  --ok:#2C6A4B;
+  --ok-soft:#DAEBDF;
+  --shadow:0 1px 0 rgba(28,38,40,.04), 0 8px 22px -14px rgba(28,38,40,.22);
+  --font-display:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho","Noto Serif JP",serif;
+  --font-body:"Zen Kaku Gothic New","Hiragino Sans","Hiragino Kaku Gothic ProN","Yu Gothic","Noto Sans JP",sans-serif;
+  --font-mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --paper:#111617; --sheet:#192021; --ink:#E3E9E5; --ink-2:#B2BDBA; --ink-3:#85928E; --rule:#2D393A; --grid:rgba(143,168,224,.07);
+    --ai:#93ACE6; --ai-ink:#0E1730; --ai-soft:#21304A;
+    --fork:#F08A72; --fork-soft:#3A2420;
+    --hypo:#E6BB5C; --hypo-soft:#362D1C; --hypo-line:#B48C34;
+    --ok:#7FC79F; --ok-soft:#1D3327;
+    --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 26px -16px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#111617; --sheet:#192021; --ink:#E3E9E5; --ink-2:#B2BDBA; --ink-3:#85928E; --rule:#2D393A; --grid:rgba(143,168,224,.07);
+  --ai:#93ACE6; --ai-ink:#0E1730; --ai-soft:#21304A;
+  --fork:#F08A72; --fork-soft:#3A2420;
+  --hypo:#E6BB5C; --hypo-soft:#362D1C; --hypo-line:#B48C34;
+  --ok:#7FC79F; --ok-soft:#1D3327;
+  --shadow:0 1px 0 rgba(0,0,0,.3), 0 10px 26px -16px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{background:var(--paper);color:var(--ink);font-family:var(--font-body);font-size:15px;line-height:1.75;}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:30;background:var(--sheet)}
+h1,h2,h3,h4{text-wrap:balance;word-break:auto-phrase;font-feature-settings:"palt"}
+p{margin:0}
+button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--ai);outline-offset:2px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.wrap{max-width:1240px;margin-inline:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.eyebrow{font-size:12px;letter-spacing:.14em;color:var(--ink-3);font-weight:500}
+.display{font-family:var(--font-display);font-weight:700;font-size:clamp(23px,3.2vw,33px);line-height:1.45;letter-spacing:.02em;margin:0}
+.lead{font-size:16px;color:var(--ink-2);max-width:40em}
+.muted{color:var(--ink-3)}
+.hint{font-size:12px;color:var(--ink-3);line-height:1.6}
+.center{text-align:center}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:700;line-height:1.3;border-radius:999px;padding:9px 18px;border:1px solid transparent;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.primary{background:var(--ai);color:var(--ai-ink)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.primary:disabled{background:var(--rule);color:var(--ink-3);cursor:not-allowed;filter:none}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--rule)}
+.btn.ghost:hover{border-color:var(--ink-3)}
+.btn.ghost:disabled{color:var(--ink-3);cursor:not-allowed}
+.btn.small{font-size:12.5px;padding:5px 12px;font-weight:500}
+.btn.wide{width:100%}
+.linkbtn{background:none;border:0;padding:2px 0;font-size:12.5px;color:var(--ai);cursor:pointer;text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px;white-space:nowrap}
+.linkbtn:disabled{color:var(--ink-3);cursor:default;text-decoration:none}
+.htag{display:inline-block;font-family:var(--font-mono);font-size:10.5px;color:var(--hypo);border:1px dashed var(--hypo-line);border-radius:4px;padding:0 5px;line-height:1.6;vertical-align:middle;margin-left:6px;white-space:nowrap;font-weight:500;letter-spacing:0}
+body.notes-off .htag{display:none}
+
+/* inputs */
+input[type="text"],textarea{font:inherit;color:var(--ink);background:var(--paper);border:1px solid var(--rule);border-radius:8px;padding:9px 12px;width:100%}
+input[type="text"]:focus,textarea:focus{border-color:var(--ai);outline:none;box-shadow:0 0 0 3px var(--ai-soft)}
+textarea{resize:vertical;line-height:1.7}
+
+/* app bar */
+.appbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--sheet);border-bottom:1px solid var(--rule)}
+.appbar-in{display:flex;align-items:center;justify-content:space-between;gap:10px 20px;flex-wrap:wrap;padding-block:10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0;color:var(--ink);text-decoration:none}
+.seal{display:inline-grid;place-items:center;width:28px;height:28px;border:1.5px solid var(--fork);color:var(--fork);font-family:var(--font-display);font-weight:700;font-size:16px;border-radius:4px;transform:rotate(-4deg);flex:none}
+.brand-name{font-family:var(--font-display);font-weight:700;font-size:19px;letter-spacing:.1em}
+.brand-sub{color:var(--ink-3);font-size:12px}
+.viewswitch{display:flex;background:var(--paper);border:1px solid var(--rule);border-radius:999px;padding:3px}
+.viewswitch a{padding:5px 14px;border-radius:999px;color:var(--ink-2);text-decoration:none;font-size:13px;font-weight:500;white-space:nowrap}
+.viewswitch a[aria-current="page"]{background:var(--ink);color:var(--sheet)}
+@media (max-width:760px){.brand-sub{display:none}.viewswitch .long{display:none}}
+
+/* rail */
+.railhead{display:flex;justify-content:space-between;align-items:center;gap:6px 16px;flex-wrap:wrap;padding-top:14px}
+.railtitle{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.railtools{display:flex;gap:16px;flex-wrap:wrap}
+.rail{list-style:none;margin:8px 0 0;padding:0;display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.rail button{display:block;width:100%;text-align:left;border:0;background:transparent;border-top:3px solid var(--rule);padding:7px 2px 2px;color:var(--ink-3);font-size:12px;line-height:1.45;cursor:pointer}
+.rail button:disabled{cursor:default}
+.rail .num{display:block;font-family:var(--font-mono);font-size:11px}
+.rail .done button{border-top-color:var(--ink-3);color:var(--ink-2)}
+.rail .cur button{border-top-color:var(--ai);color:var(--ink);font-weight:700}
+.rail .cur .num{color:var(--ai)}
+@media (max-width:760px){.rail{display:flex;overflow-x:auto;scrollbar-width:none}.rail li{flex:0 0 7.2em}}
+.why{margin-top:10px;padding:10px 14px;border:1px dashed var(--hypo-line);border-radius:var(--r);background:var(--sheet);font-size:13px;line-height:1.65}
+.why-k{display:flex;gap:10px;align-items:baseline;flex-wrap:wrap;margin-bottom:6px}
+.why-k .tag{font-size:11px;letter-spacing:.12em;color:var(--hypo);font-weight:700}
+.why-k a{margin-left:auto;font-size:12.5px;color:var(--ai)}
+.why dl{margin:0;display:grid;gap:3px}
+.why dl>div{display:grid;grid-template-columns:6.5em minmax(0,1fr);gap:10px}
+.why dt{color:var(--ink-3);font-size:12px;padding-top:1px}
+.why dd{margin:0;color:var(--ink-2)}
+@media (max-width:560px){.why dl>div{grid-template-columns:1fr;gap:0}}
+
+/* invite */
+.invite{padding-block:28px 64px;display:grid;gap:30px}
+.letter{display:grid;gap:12px;max-width:48rem}
+.from{display:flex;align-items:center;gap:10px;font-size:13px;color:var(--ink-2)}
+.avatar{width:30px;height:30px;border-radius:50%;display:inline-grid;place-items:center;background:var(--ai-soft);color:var(--ai);font-weight:700;font-size:13px;flex:none}
+.facts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));border-block:1px solid var(--rule)}
+.fact{padding:18px 20px 18px 0;display:grid;gap:6px;align-content:start}
+.fact+.fact{padding-left:20px;border-left:1px solid var(--rule)}
+.fact h2{font-size:12px;letter-spacing:.12em;color:var(--ink-3);margin:0;font-weight:500}
+.fact .big{font-family:var(--font-display);font-size:22px;font-weight:700}
+.person{display:flex;gap:10px;align-items:center}
+.person b{font-size:16px}
+.fine{font-size:12.5px;color:var(--ink-3)}
+@media (max-width:760px){.facts{grid-template-columns:1fr}.fact,.fact+.fact{padding:14px 0;border-left:0}.fact+.fact{border-top:1px solid var(--rule)}}
+.sample-wrap{display:grid;grid-template-columns:minmax(0,17rem) minmax(0,1fr);gap:24px;align-items:start}
+.sample-note{display:grid;gap:8px}
+.sample-note h2{font-family:var(--font-display);font-size:19px;margin:0}
+.sample-note p{color:var(--ink-2);font-size:14px}
+.gridsheet{background-color:var(--sheet);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px;border:1px solid var(--rule);border-radius:var(--r);padding:18px}
+.gridsheet .caption{font-size:12px;color:var(--ink-3);margin-bottom:8px}
+@media (max-width:760px){.sample-wrap{grid-template-columns:1fr}}
+.cta-row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.banner{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap;padding:12px 16px;border-radius:var(--r);background:var(--ai-soft);font-size:14px}
+.banner p{flex:1 1 16em;min-width:0}
+.livesetup{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:20px;display:grid;gap:14px;max-width:46rem}
+.livesetup h2{font-family:var(--font-display);font-size:20px;margin:0}
+.livesetup .intro{font-size:14px;color:var(--ink-2)}
+.field{display:grid;gap:4px;min-width:0}
+.field label{font-size:12.5px;color:var(--ink-2);font-weight:500}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:560px){.field-row{grid-template-columns:1fr}}
+.avail{font-size:12.5px;color:var(--ink-2);padding:8px 12px;border-radius:8px;background:var(--paper)}
+.avail.no{color:var(--fork)}
+
+/* interview */
+.interview{display:grid;grid-template-columns:minmax(0,1.12fr) minmax(0,1fr);gap:20px;padding-block:16px 40px;align-items:start}
+.talk{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);display:flex;flex-direction:column;min-width:0}
+.talk-head{display:flex;align-items:center;gap:6px 12px;flex-wrap:wrap;padding:10px 16px;border-bottom:1px solid var(--rule);font-size:12.5px;color:var(--ink-2)}
+.talk-head .session{font-weight:700;color:var(--ink)}
+.talk-head .theme{min-width:0}
+.talk-head .elapsed{font-family:var(--font-mono);font-size:12px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.talk-head .spacer{flex:1 1 auto}
+.modechip{font-size:11px;padding:1px 8px;border-radius:999px;background:var(--paper);color:var(--ink-2);border:1px solid var(--rule)}
+.modechip.live{background:var(--ai-soft);color:var(--ai);border-color:transparent}
+.log{padding:18px 20px;display:flex;flex-direction:column;gap:16px;max-height:min(62vh,640px);min-height:320px;overflow-y:auto}
+.msg .who{font-size:11px;letter-spacing:.1em;color:var(--ink-3);margin-bottom:2px}
+.msg.ai{border-left:2px solid var(--ai);padding-left:14px}
+.msg.ai .q{font-family:var(--font-display);font-size:17px;line-height:1.85;font-weight:500;white-space:pre-line}
+.msg.me{align-self:flex-end;max-width:88%;background:var(--paper);border-radius:12px 12px 3px 12px;padding:9px 14px}
+.msg.me p{white-space:pre-line}
+.msg.sys{display:flex;gap:8px;align-items:baseline;font-size:12.5px;color:var(--ink-3);line-height:1.6}
+.sys-k{flex:none;font-size:10.5px;letter-spacing:.08em;color:var(--ok);border:1px solid var(--ok);border-radius:4px;padding:0 5px;line-height:1.7}
+.divider{display:flex;align-items:center;gap:12px;font-size:12px;color:var(--ink-3)}
+.divider::before,.divider::after{content:"";flex:1;height:1px;background:var(--rule)}
+.ans{list-style:none;margin:0;padding:0;display:grid;gap:4px;font-size:14px}
+.ans li{display:flex;gap:8px;align-items:baseline}
+.ans .fixline{display:block;color:var(--ink-2)}
+.v{flex:none;font-size:11px;font-weight:700;border-radius:4px;padding:0 6px;line-height:1.8}
+.v-yes{background:var(--ok-soft);color:var(--ok)}
+.v-partly{background:var(--hypo-soft);color:var(--hypo)}
+.v-no{background:transparent;color:var(--ink-3);border:1px solid var(--rule)}
+.hypos{list-style:none;margin:12px 0 0;padding:0;display:grid;gap:8px}
+.hypo{border:1px dashed var(--hypo-line);background:var(--hypo-soft);border-radius:8px;padding:10px 12px;display:grid;gap:8px}
+.hypo.is-yes{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+.hypo.is-no{background:transparent;border-color:var(--rule)}
+.hypo.is-no .ht{color:var(--ink-3)}
+.ht{font-size:14.5px;line-height:1.7}
+.hn{font-family:var(--font-mono);font-size:11px;color:var(--hypo);margin-right:8px}
+.seg{display:inline-flex;flex-wrap:wrap;border:1px solid var(--rule);border-radius:999px;background:var(--sheet);overflow:hidden;justify-self:start}
+.seg button{border:0;background:transparent;padding:5px 13px;font-size:13px;color:var(--ink-2);cursor:pointer}
+.seg button+button{border-left:1px solid var(--rule)}
+.seg button:hover{background:var(--paper)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--sheet)}
+.seg.big button{padding:8px 18px;font-size:14px;font-weight:500}
+.fix{display:grid;gap:4px;font-size:12px;color:var(--ink-2)}
+.fix input{background:var(--sheet)}
+.hypo-send{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:10px}
+.scale{display:grid;gap:8px;margin-top:12px}
+.composer{border-top:1px solid var(--rule);padding:12px 16px 14px;display:grid;gap:8px}
+.composer textarea{min-height:86px;font-size:15px}
+.composer .row{display:flex;gap:8px 12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.composer .row .hint{flex:1 1 16em}
+.composer .btns{display:flex;gap:8px;flex-wrap:wrap}
+.composer .hint.center{padding:8px 0}
+.pause{background:var(--paper)}
+.pause-title{font-family:var(--font-display);font-weight:700;font-size:16px}
+.pause label{font-size:12.5px;color:var(--ink-2)}
+.pause input{background:var(--sheet)}
+.typing{display:flex;align-items:center;gap:5px;color:var(--ink-3);font-size:13px;padding:6px 0}
+.typing .d{width:6px;height:6px;border-radius:50%;background:var(--ink-3);animation:blink 1.2s infinite ease-in-out}
+.typing .d:nth-child(2){animation-delay:.15s}.typing .d:nth-child(3){animation-delay:.3s}
+.typing .t{margin-left:6px}
+@keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+.err{color:var(--fork);font-size:13.5px}
+.mtabs{display:none}
+
+/* note */
+.note{background-color:var(--sheet);background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:18px 18px;border:1px solid var(--rule);border-radius:var(--r);padding:14px 18px 20px;display:grid;gap:20px;min-width:0}
+.note-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap;border-bottom:1px solid var(--rule);padding-bottom:8px}
+.note-head h2{font-family:var(--font-display);font-size:17px;margin:0;letter-spacing:.06em}
+.note-stats{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-3)}
+.note h3{font-size:11.5px;letter-spacing:.14em;color:var(--ink-3);font-weight:500;margin:0 0 6px}
+.day-title{font-family:var(--font-display);font-size:18px;font-weight:700}
+.day-sub{font-size:13.5px;color:var(--ink-2)}
+.timeline{list-style:none;margin:10px 0 0;padding:0}
+.ev{display:grid;grid-template-columns:3.3em 16px minmax(0,1fr);gap:8px;align-items:start;font-size:14px;line-height:1.65}
+.ev time{font-family:var(--font-mono);font-size:12.5px;color:var(--ink-2);font-variant-numeric:tabular-nums;padding-top:3px}
+.rail-col{position:relative;align-self:stretch;display:flex;justify-content:center}
+.rail-col::before{content:"";position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--rule)}
+.ev:first-child .rail-col::before{top:10px}
+.ev:last-child .rail-col::before{bottom:calc(100% - 12px)}
+.dot{position:relative;width:9px;height:9px;border-radius:50%;background:var(--ink-3);margin-top:8px;border:2px solid var(--sheet);box-sizing:content-box}
+.ev.fork .dot{width:9px;height:9px;border-radius:1px;transform:rotate(45deg);background:var(--fork)}
+.ev p{padding:2px 0 8px}
+.fork-tag{color:var(--fork);font-size:11.5px;font-weight:700;margin-left:6px;white-space:nowrap}
+.empty-note{font-size:13px;color:var(--ink-3);border:1px dashed var(--rule);border-radius:8px;padding:10px 12px;background:var(--sheet)}
+.cardlist{display:grid;gap:10px}
+.legend{display:flex;gap:6px 16px;flex-wrap:wrap;font-size:11.5px;color:var(--ink-3)}
+.lg-fork{color:var(--fork)}
+.lg-ai{border-bottom:1.5px dotted var(--hypo-line)}
+
+/* card */
+.card{background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;display:grid;gap:8px;box-shadow:var(--shadow);min-width:0}
+.card-head{display:flex;gap:4px 10px;align-items:baseline;flex-wrap:wrap}
+.card-no{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-3)}
+.card h4{margin:0;font-family:var(--font-display);font-size:16px;font-weight:700;flex:1 1 12em;min-width:0;line-height:1.55}
+.cert{font-size:11.5px;padding:0 8px;border-radius:999px;border:1px solid var(--rule);color:var(--ink-2);white-space:nowrap;line-height:1.8}
+.cert.unset{border-style:dashed;color:var(--hypo);border-color:var(--hypo-line)}
+.ifthen{margin:0;display:grid;gap:3px}
+.ifthen>div{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:8px}
+.ifthen dt{font-family:var(--font-display);font-weight:700;color:var(--ai);font-size:13.5px;padding-top:1px}
+.ifthen dd{margin:0;font-size:14.5px}
+.ifthen ul{margin:0;padding-left:1.1em}
+.ifthen .empty{color:var(--ink-3);font-size:13px}
+.sub{display:grid;gap:4px}
+.sub-label{font-size:11px;color:var(--ink-3);letter-spacing:.08em}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font-size:12.5px;padding:2px 9px;border-radius:6px;background:var(--ok-soft);line-height:1.6}
+.chip.not{background:transparent;border:1px solid var(--rule);color:var(--ink-2)}
+.chip.not::before{content:"× ";color:var(--ink-3)}
+.pitfall{font-size:13.5px;background:var(--fork-soft);border-radius:6px;padding:5px 10px}
+.quote{margin:0;font-family:var(--font-display);font-size:14.5px;color:var(--ink-2);border-left:2px solid var(--ink-3);padding-left:10px;line-height:1.7}
+.quote cite{font-style:normal;font-family:var(--font-body);font-size:11.5px;color:var(--ink-3);margin-left:6px;white-space:nowrap}
+.card-foot{font-size:12px;color:var(--hypo)}
+.aim{background:transparent;color:inherit;border-bottom:1.5px dotted var(--hypo-line);padding:0 1px;border-radius:2px}
+.aim[data-action]{cursor:pointer}
+.aim sup{font-family:var(--font-mono);font-size:10px;color:var(--hypo);margin-left:1px}
+@keyframes freshbg{from{background-color:var(--hypo-soft)}to{background-color:transparent}}
+@keyframes ring{from{box-shadow:0 0 0 3px var(--hypo-line)}to{box-shadow:0 0 0 0 transparent}}
+.ev.fresh p,.day-title.fresh{animation:freshbg 2.6s ease-out 1}
+.card.fresh-card{animation:ring 2.4s ease-out 1}
+.pulse{animation:ring 1.8s ease-out 1}
+
+/* resume */
+.resume{padding-block:28px 64px;display:grid;gap:24px}
+.resume-grid{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr);gap:16px}
+.rs{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:16px 18px;display:grid;gap:8px;align-content:start}
+.rs h2{font-size:12px;letter-spacing:.14em;color:var(--ink-3);font-weight:500;margin:0}
+.rs ul{margin:0;padding-left:1.1em;display:grid;gap:4px;font-size:14px}
+.rs.memo{background:var(--hypo-soft);border-color:var(--hypo-line)}
+.memo-text{font-family:var(--font-display);font-size:17px;line-height:1.7}
+.next{font-family:var(--font-display);font-size:17px;line-height:1.7}
+.peek summary{cursor:pointer;font-size:13px;color:var(--ai);margin-bottom:10px}
+.peek .cardlist{grid-template-columns:repeat(auto-fill,minmax(min(100%,340px),1fr))}
+@media (max-width:860px){.resume-grid{grid-template-columns:1fr}}
+
+/* review */
+.review{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:24px;padding-block:18px 56px;align-items:start}
+.doc{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:20px clamp(16px,4vw,40px) 36px;display:grid;gap:14px;min-width:0}
+.doc-tools{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.doc-by{color:var(--ink-2);font-size:14px}
+.doc-meta{display:flex;flex-wrap:wrap;gap:2px 18px;font-size:12.5px;color:var(--ink-2);border-block:1px solid var(--rule);padding-block:8px}
+.doc-meta b{font-weight:500;color:var(--ink-3);margin-right:6px}
+.doc .card{box-shadow:none;border:0;border-top:1px solid var(--rule);border-radius:0;padding:18px 0 6px;background:transparent}
+.doc .card h4{font-size:18px}
+.doc-day h2{font-size:12px;letter-spacing:.14em;color:var(--ink-3);font-weight:500;margin:10px 0 0}
+.queue{position:sticky;top:calc(env(safe-area-inset-top,0px) + 66px);background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:16px;display:grid;gap:12px;max-height:calc(100vh - 90px);overflow-y:auto}
+.queue h2{font-family:var(--font-display);font-size:18px;margin:0}
+.qcount{font-size:13px;color:var(--ink-2)}
+.qcount b{font-family:var(--font-mono);font-size:20px;color:var(--hypo);margin-right:2px}
+.bar{height:4px;border-radius:2px;background:var(--paper);overflow:hidden;margin-top:6px}
+.bar span{display:block;height:100%;background:var(--ok);transition:width .3s}
+.qintro{font-size:12.5px;color:var(--ink-2)}
+.qlist{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.qitem{border:1px solid var(--rule);border-radius:8px;padding:10px 12px;display:grid;gap:6px;font-size:13.5px}
+.qitem.open{border-color:var(--hypo-line);background:var(--hypo-soft)}
+.qitem.done{display:flex;gap:8px;align-items:baseline;color:var(--ink-2);font-size:12.5px;padding:6px 12px}
+.qcheck{color:var(--ok);font-weight:700}
+.qhead{display:flex;gap:8px;align-items:baseline}
+.qhead .linkbtn{margin-left:auto}
+.qnum{font-family:var(--font-mono);font-size:11px;color:var(--hypo);border:1px solid var(--hypo-line);border-radius:4px;padding:0 5px;line-height:1.6}
+.qitem.done .qnum{color:var(--ink-3);border-color:var(--rule)}
+.qcard{font-size:11.5px;color:var(--ink-3)}
+.qmatch{font-family:var(--font-display);font-size:15px}
+.qnote{color:var(--ink-2)}
+.qact,.qfix .row{display:flex;gap:8px;flex-wrap:wrap}
+.qfix{display:grid;gap:6px}
+.qfix input{background:var(--sheet)}
+.handoff{border-top:1px solid var(--rule);padding-top:12px;display:grid;gap:8px}
+.handoff h3{font-size:12px;letter-spacing:.14em;color:var(--ink-3);font-weight:500;margin:0}
+.check{display:flex;gap:8px;align-items:center;font-size:13.5px}
+.check input{accent-color:var(--ai);width:16px;height:16px}
+@media (max-width:900px){.review{grid-template-columns:1fr}.queue{position:static;max-height:none}}
+
+/* done */
+.donescr{padding-block:40px 72px;display:grid;gap:18px;max-width:46rem}
+.done-list{margin:0;padding:0;list-style:none;display:grid;gap:0;border-block:1px solid var(--rule)}
+.done-list li{padding:12px 0;font-size:14.5px}
+.done-list li+li{border-top:1px solid var(--rule)}
+.copybox{font-family:var(--font-mono);font-size:12px;min-height:180px;background:var(--sheet)}
+.status{font-size:12.5px;color:var(--ok)}
+
+/* map */
+.map-intro{padding-block:28px 14px;display:grid;gap:14px}
+.map-meta{display:grid;gap:4px;font-size:13px;color:var(--ink-2)}
+.map-meta b{font-weight:500;color:var(--ink-3);margin-right:8px}
+.mapband{overflow-x:auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:6px 26px}
+table.map{border-collapse:separate;border-spacing:0;width:max(1740px,100%);table-layout:fixed;font-size:13px;line-height:1.7;background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r)}
+.map th,.map td{vertical-align:top;padding:10px 12px;border-bottom:1px solid var(--rule);border-right:1px solid var(--rule);text-align:left;background:var(--sheet)}
+.map thead th{background:var(--paper);font-weight:700}
+.map .mnum{display:block;font-family:var(--font-mono);font-size:11px;color:var(--ai);font-weight:500}
+.map .mname{font-family:var(--font-display);font-size:15px}
+.map .rowh{position:sticky;left:0;z-index:2;width:9.5em;background:var(--paper);font-size:12.5px;font-weight:700}
+.map .corner{font-size:11px;color:var(--ink-3);font-weight:500}
+.map .grp{display:block;font-size:10.5px;font-weight:500;color:var(--ink-3);letter-spacing:.06em;margin-bottom:2px}
+.map tr.g-product td{background:var(--paper)}
+.map tr.g-product.r-method td{background:var(--ai-soft)}
+.map tr.g-product.r-method .rowh{color:var(--ai)}
+.map td.hl,.map th.hl{box-shadow:inset 0 0 0 2px var(--ai)}
+.map .mstatus{display:block;font-size:12px;color:var(--ink-3)}
+.map td .linkbtn{margin-top:4px;display:inline-block}
+.hold{display:inline-block;font-size:11px;font-weight:700;border-radius:4px;padding:0 6px;margin:4px 6px 0 0;line-height:1.8}
+.hold.ok{background:var(--ok-soft);color:var(--ok)}
+.hold.ng{background:var(--fork-soft);color:var(--fork)}
+.holdwhy{font-size:12px;color:var(--ink-3)}
+.holdhow{display:block;font-size:12px;color:var(--ai);font-weight:500}
+.ideal{display:block}
+.gapsep{display:block;color:var(--ink-3);font-size:12px;margin:2px 0}
+.gap{display:block;color:var(--fork)}
+.map td.goalcell{background:var(--ink);color:var(--sheet);width:15em;border-right:0}
+.map th.goal-h{width:15em}
+.goal{display:grid;gap:4px}
+.goal .gk{font-size:10.5px;letter-spacing:.14em;opacity:.7;margin-top:6px}
+.goal .gv{font-family:var(--font-display);font-size:14.5px;line-height:1.7}
+.sec{padding-block:18px 8px;display:grid;gap:14px}
+.sec>h2{font-family:var(--font-display);font-size:21px;margin:0}
+.sec>.lead{font-size:14px}
+.opts{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,520px),1fr));gap:14px}
+.opt-step{background:var(--sheet);border:1px solid var(--rule);border-radius:var(--r);padding:12px 16px 8px}
+.opt-step h3{margin:0 0 4px;font-size:14px;display:flex;gap:8px;align-items:baseline}
+.opt-step h3 .mnum{font-family:var(--font-mono);font-size:11px;color:var(--ai);font-weight:500}
+.opt{display:grid;grid-template-columns:8.6em minmax(0,1fr) auto;gap:2px 12px;padding:8px 0;border-top:1px solid var(--rule);font-size:13px}
+.opt .origin{font-size:11.5px;color:var(--ink-3);padding-top:2px}
+.opt .idea{font-weight:500}
+.opt .reason{grid-column:2/3;font-size:12.5px;color:var(--ink-2)}
+.verdict{font-size:11px;font-weight:700;padding:0 8px;border-radius:999px;white-space:nowrap;align-self:start;line-height:1.9}
+.verdict.v-採用{background:var(--ok-soft);color:var(--ok)}
+.verdict.v-外す{border:1px solid var(--rule);color:var(--ink-3)}
+.verdict.v-保留,.verdict.v-補助{background:var(--hypo-soft);color:var(--hypo)}
+@media (max-width:560px){.opt{grid-template-columns:minmax(0,1fr) auto}.opt .origin{grid-column:1/-1}.opt .reason{grid-column:1/-1}}
+.hlist{list-style:none;margin:0;padding:0;display:grid;gap:0;border-block:1px solid var(--rule)}
+.hlist li{display:grid;grid-template-columns:4em minmax(0,1fr) auto;gap:4px 12px;padding:10px 0;align-items:baseline;font-size:14px}
+.hlist li+li{border-top:1px solid var(--rule)}
+.hlist .hid{font-family:var(--font-mono);font-size:12px;color:var(--hypo)}
+.hlist .hsteps{font-family:var(--font-mono);font-size:11.5px;color:var(--ink-3);white-space:nowrap}
+@media (max-width:560px){.hlist li{grid-template-columns:3.4em minmax(0,1fr)}.hlist .hsteps{grid-column:2}}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.checks li{display:grid;grid-template-columns:1.6em minmax(0,1fr);gap:8px;font-size:14px;background:var(--sheet);border:1px solid var(--rule);border-radius:8px;padding:10px 14px}
+.checks .mk{font-weight:700;color:var(--ok)}
+.checks .mk.manual{color:var(--hypo)}
+.checks .cd{display:block;font-size:12px;color:var(--ink-3)}
+.map-foot{padding-block:18px 64px}
+
+@media (max-width:760px){
+  .interview{grid-template-columns:1fr;gap:10px}
+  .mtabs{display:flex;gap:4px;background:var(--sheet);border:1px solid var(--rule);border-radius:999px;padding:3px}
+  .mtabs button{flex:1;border:0;background:transparent;border-radius:999px;padding:6px 10px;font-size:13px;font-weight:500;color:var(--ink-2);cursor:pointer;display:inline-flex;gap:6px;justify-content:center;align-items:center}
+  .mtabs button[aria-selected="true"]{background:var(--ink);color:var(--sheet)}
+  .mtabs .badge{font-family:var(--font-mono);font-size:10.5px;background:var(--hypo-soft);color:var(--hypo);border-radius:999px;padding:0 6px}
+  .interview[data-mtab="talk"] .note,.interview[data-mtab="note"] .talk{display:none}
+  .log{max-height:none;min-height:0;padding:14px 14px}
+  .msg.ai .q{font-size:16px}
+  .msg.me{max-width:94%}
+}
+@media (prefers-reduced-motion:reduce){
+  .typing .d,.ev.fresh p,.day-title.fresh,.card.fresh-card,.pulse{animation:none}
+  .bar span{transition:none}
+}
+</style>
+
+<header class="appbar">
+  <div class="wrap appbar-in">
+    <a class="brand" href="#prototype">
+      <span class="seal" aria-hidden="true">聞</span>
+      <span class="brand-name">キキガキ</span>
+      <span class="brand-sub">業務の暗黙知を聞き書きする</span>
+    </a>
+    <nav class="viewswitch" aria-label="表示の切り替え">
+      <a href="#prototype" data-view="prototype">プロトタイプ</a>
+      <a href="#map" data-view="map"><span class="long">インテント・リバース</span>マップ</a>
+    </nav>
+  </div>
+</header>
+<p class="sr" aria-live="polite" id="announce"></p>
+<main id="view-prototype">
+  <div class="wrap" id="railbar"></div>
+  <div id="screen"></div>
+</main>
+<main id="view-map" hidden></main>
+
+<script>
+(() => {
+'use strict';
+
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => Array.from(el.querySelectorAll(s));
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const uid = (p) => p + Math.random().toString(36).slice(2, 9);
+const store = {
+  get(k) { try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : null; } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) { /* storage unavailable */ } },
+  del(k) { try { localStorage.removeItem(k); } catch (e) { /* storage unavailable */ } },
+};
+const reduceMotion = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+const narrow = () => { try { return matchMedia('(max-width: 760px)').matches; } catch (e) { return false; } };
+const finePointer = () => { try { return matchMedia('(pointer: fine)').matches; } catch (e) { return false; } };
+
+/* =====================================================================
+   インテント・リバースマップ（このページの設計の元データ）
+   プロトタイプの「設計の根拠」と、マップ表示の両方がここから描かれる。
+   ===================================================================== */
+/*MAP-START*/
+const MAP = {
+  title: '天気が崩れそうな日の配車を、後任に残すまで',
+  request: '人間にインタビューをして、業務の暗黙知を引き出す',
+  splitRule: '視線の向き先が変わる／何かを決める／保持する情報が入れ替わる／プロダクトの外に出る・戻る',
+  goal: {
+    who: '配車を22年担ってきた佐藤さん（話し手）',
+    know: '自分の判断のしかた（どの手がかりを見て、どう決め、いつ例外にするか）が、後任の木村さんが読んで同じ判断にたどり着ける形で書かれていると、自分で確かめられた',
+    next: '判断メモを木村さんに渡す',
+  },
+  steps: [
+    {
+      id: 'S1', name: '依頼を受け止める', short: '依頼を受け止める',
+      screen: '招待', screenStatus: '新規。いまは上長からのチャットの依頼文だけ',
+      gaze: '自分の仕事は人に説明するほどのものではないと思っている。それより、話した内容が評価に使われないか、どれだけ時間を取られるかに意識が向いている',
+      hold: '依頼の目的と、誰に引き継ぐか', holdOk: true, holdWhy: '短く、なじみがある',
+      action: '引き受けるかを決める',
+      now: '依頼文には「ナレッジ化にご協力を」とだけある。誰が読むのか、話した内容がどう扱われるのかは見えない',
+      ideal: '始める前に、誰のために何が残り、誰が見られて、どれだけかかるかが分かっている',
+      gap: '目的が抽象的で、何を話せばいいかも、どこまで見られるかも分からないまま構えている',
+      method: '招待の画面に、受け手の名前と経験年数、残るもの（判断メモの見本）、見られる範囲（本人が渡すまで依頼者も見られない）、かかる時間（20分×3回・中断できる）を並べる。見られる範囲は文面ではなく仕組みで守る',
+      options: [
+        { origin: '今の慣習どおり', idea: '依頼文に目的を丁寧に書く', verdict: '外す', why: '見られる範囲の約束が文面だけになり、守られる保証がない' },
+        { origin: '似たサービスの慣習', idea: '同意書と利用規約への同意を取る', verdict: '外す', why: '安心させるより、構えさせる方向に効く' },
+        { origin: 'システムが肩代わりする', idea: '本人が渡すまで、依頼者にも中身が見えないようにする', verdict: '採用', why: '評価に使われないかという気がかりに、仕組みで答えられる' },
+        { origin: 'ゴールから逆算する', idea: '完成した判断メモの見本を先に見せる', verdict: '採用', why: '何を話せばいいかの見通しが立つ' },
+      ],
+    },
+    {
+      id: 'S2', name: 'ある1日を思い出す', short: '1日を思い出す',
+      screen: 'インタビュー', screenStatus: '新規',
+      gaze: '「業務を教えてください」と聞かれると、手順書にある当たり前のことしか浮かばない。何から話せばいいかに意識が向いている',
+      hold: '話すテーマ（天気が崩れそうな日の配車）', holdOk: true, holdWhy: '短く、本人の言葉で書かれている',
+      action: '思い出す、話し始める',
+      now: '招待の画面で、受け手・テーマ・判断メモの見本を見たうえで、1回目を始めている',
+      ideal: '特定の1日を思い出せば、その中に判断が自然に含まれている',
+      gap: '一般論で聞かれると「普通にやっているだけ」で終わる。暗黙知は一般論からは出てこない',
+      method: '最初の問いを「最近、天気のせいで段取りを変えた日」のような具体的な1日に固定する。答えると、ノートにその日の見出しが立つ',
+      options: [
+        { origin: '今の慣習どおり', idea: '業務一覧から、話す業務を選んでもらう', verdict: '外す', why: '一般論に戻る' },
+        { origin: '似たサービスの慣習', idea: '汎用のチャットで自由に話してもらう', verdict: '外す', why: '問いが抽象的になりやすく、話し手任せになる' },
+        { origin: 'システムが肩代わりする', idea: '配車の実績から、いつもと違った日を候補に出す', verdict: '保留', why: '実績データとの連携が前提になる（仮説 H6）' },
+        { origin: 'ゴールから逆算する', idea: '問いを1日の出来事に固定する', verdict: '採用', why: '判断メモに要るのは、実際にあった判断だから' },
+      ],
+    },
+    {
+      id: 'S3', name: 'その日の流れを話す', short: '流れを話す',
+      screen: 'インタビュー', screenStatus: '新規',
+      gaze: '話しているうちに、どこまで話したか、さっきの話と食い違っていないかに意識が向いている',
+      hold: 'その日の流れ（時刻、便、電話した相手）', holdOk: false, holdWhy: '長く、話すそばから流れていく', holdHow: '使う場所に出す',
+      action: '出来事を順に話す、抜けを補う',
+      now: '1日を思い出して話し始めた。話した内容は、会話の中に流れていくだけ',
+      ideal: '話した内容がその場で時刻順に並び、抜けや判断の分かれ目が本人にも見えている',
+      gap: '会話をさかのぼらないと、何を話したか分からない',
+      method: '話した内容を、ノートに時刻順のタイムラインとして積む。判断が起きた点には「分かれ目」の印を付け、次の問いはその印から選ぶ。変えなかった便も聞き、しなかった判断も並べる',
+      options: [
+        { origin: '今の慣習どおり', idea: '会話のログだけを残す', verdict: '外す', why: 'さかのぼらないと見えない' },
+        { origin: '似たサービスの慣習', idea: '議事録のように段落で要約する', verdict: '外す', why: '時刻の順と分かれ目が文章に埋もれる' },
+        { origin: 'システムが肩代わりする', idea: '発言から時刻と出来事を抜き出して、タイムラインにする', verdict: '採用', why: '話し手は話すだけでよい' },
+        { origin: 'ゴールから逆算する', idea: '判断メモの元になる分かれ目に印を付ける', verdict: '採用', why: '次に聞くべき場所が、話し手にも見える' },
+      ],
+    },
+    {
+      id: 'S4', name: '理由を言葉にする', short: '理由を正す',
+      screen: 'インタビュー', screenStatus: '新規',
+      gaze: '「なぜそうしたか」と聞かれても「経験で」としか言えない。うまく説明できていないことに意識が向いている',
+      hold: '分かれ目の瞬間に見ていたもの（雲の位置、道の混み方）', holdOk: false, holdWhy: '本人も意識しておらず、思い出しても言葉にならない', holdHow: '使う場所に出す（手がかりの候補として並べる）',
+      action: '確かめる、正す',
+      now: 'タイムラインに分かれ目の印が付き、その分かれ目の理由を聞かれている',
+      ideal: '理由をゼロから言うのではなく、候補を見て「それ」「少し違う」「違う」と正すだけで言葉になる',
+      gap: '白紙の問いに答えなければならない',
+      method: 'AIが手がかりの仮説を2〜3個並べ、話し手は「そう／少し違う／違う」で正す。「少し違う」のときだけ直す言葉を足す。正した結果は判断カードになり、違うと分かったものも「決め手ではないもの」として残す。続けて「木村さんならどうすると思うか」と対比で聞き、新人がやりがちなことを引き出す',
+      options: [
+        { origin: '今の慣習どおり', idea: '「なぜですか」と自由に答えてもらう', verdict: '外す', why: '白紙のままで、「経験で」に戻る' },
+        { origin: '似たサービスの慣習', idea: '選択式のアンケートにする', verdict: '外す', why: '選択肢の外にある本当の理由が出ない' },
+        { origin: 'システムが肩代わりする', idea: 'AIが仮説を出し、話し手が正す', verdict: '採用', why: '正すほうが、ゼロから言うより易しい。外れた仮説も「決め手ではない」という知識になる' },
+        { origin: 'ゴールから逆算する', idea: '後任ならどうするかを対比で聞く', verdict: '採用', why: '後任がつまずく点が、そのまま判断メモに入る' },
+      ],
+    },
+    {
+      id: 'S5', name: '例外と確かさを決める', short: '例外を決める',
+      screen: 'インタビュー', screenStatus: '新規',
+      gaze: '言い切りで書かれた途端に「いつもそうとは限らない」と気になる。後任が杓子定規に使うことに意識が向いている',
+      hold: 'これまでに確かめた判断（数枚）', holdOk: false, holdWhy: '増えていき、どれの例外を話したか覚えていられない', holdHow: '使う場所に出す（カードごとに「ただし」の欄）',
+      action: '当てはまらない場合を挙げる、どれくらい確かかを決める',
+      now: 'ノートに判断カードが並び始めた。どれも「〜する」と言い切りで書かれている',
+      ideal: 'どの判断にも「当てはまらないとき」と「どれくらい確かか」が付き、言い切りの強さを本人が決めている',
+      gap: '判断が断定で書かれ、例外を置く場所がない',
+      method: '判断カードを「もし／なら／ただし」の3段に固定する。確かさは「いつも／たいてい／場合による」の言葉で話し手が選ぶ。AIは「ただし」が空のカードから順に聞く',
+      options: [
+        { origin: '今の慣習どおり', idea: '備考欄に例外を書く', verdict: '外す', why: '例外が判断から離れ、読まれない' },
+        { origin: '似たサービスの慣習', idea: '確信度を％で付ける', verdict: '外す', why: '話し手は数字で考えていない' },
+        { origin: 'システムが肩代わりする', idea: '「ただし」が空のカードをAIが拾って聞く', verdict: '採用', why: 'どれを話したかを話し手が覚えておかなくてよい' },
+        { origin: 'ゴールから逆算する', idea: '3段のカードと、言葉で選ぶ確かさ', verdict: '採用', why: '後任が「いつ当てはめないか」まで読める' },
+      ],
+    },
+    {
+      id: 'S6', name: '業務に戻り、また戻ってくる', short: '中断と再開',
+      screen: '中断・再開', screenStatus: '新規。プロダクトの外に出て、戻ってくる',
+      gaze: '電話や出発の締め切りで中断される。戻ってきたとき、どこまで話したか、何を話すつもりだったかに意識が向いている',
+      hold: '言いかけていたこと、話の続き', holdOk: false, holdWhy: '使うのが数日後になる', holdHow: 'すぐ呼び出せるようにする',
+      action: '中断する、続きを始める',
+      now: 'タイムラインと判断カードが途中まで積まれている',
+      ideal: '戻った瞬間に、前回の続きと次に聞かれることが分かり、最初の問いから続きに入れる',
+      gap: '会話を読み返さないと再開できない',
+      method: '中断するときに、言いかけたことを1行だけ残せる。再開すると、最初に「前回まで」「あなたのメモ」「次に伺うこと」の3つを出し、最初の問いはメモから始める',
+      options: [
+        { origin: '今の慣習どおり', idea: '会話を全部残し、読み返してもらう', verdict: '外す', why: '読み返す手間が話し手に残る' },
+        { origin: '似たサービスの慣習', idea: '続きのリマインドを送る', verdict: '補助', why: 'プロダクトの外で、戻るきっかけにはなる' },
+        { origin: 'システムが肩代わりする', idea: '前回までの要約を自動で出す', verdict: '採用', why: 'ノートから組み立てられる' },
+        { origin: 'ゴールから逆算する', idea: '1回で最後まで終える', verdict: '外す', why: '業務中の熟練者には現実的でない' },
+      ],
+    },
+    {
+      id: 'S7', name: '確かめて渡す', short: '確かめて渡す',
+      screen: '確認', screenStatus: '新規',
+      gaze: '自分の言ったことが歪められていないか、AIが補ったのはどこか、木村さんがどう読むかに意識が向いている',
+      hold: '2〜3回分の、自分が実際に話したこと', holdOk: false, holdWhy: '長く、全部は覚えていない', holdHow: '使う場所に出す（補ったところに印）',
+      action: '確かめる、直す、渡す',
+      now: '判断カードに例外まで付いた。整えられた文章のうち、どこが自分の言葉でどこがAIの補いかは区別されていない',
+      ideal: 'AIが補ったところだけを順に確かめれば終わり、自分の言葉はそのまま残っている',
+      gap: '全文を読み直さないと安心できない',
+      method: '判断メモを「本人の言葉（引用）」と「AIの補い（点線）」で書き分け、補いと未決の確かさだけを「確かめること」として並べる。上から「合っている／直す」で消していき、0件になると渡せる。木村さんが読む形でも見られる',
+      options: [
+        { origin: '今の慣習どおり', idea: '全文の要約を読んで承認する', verdict: '外す', why: '長く、どこが補いかが見えない' },
+        { origin: '似たサービスの慣習', idea: '変更履歴（差分）で見せる', verdict: '外す', why: '元の話は文章ではないので、差分にならない' },
+        { origin: 'システムが肩代わりする', idea: '補いだけを確認待ちとして並べる', verdict: '採用', why: '確かめる量が、補った量だけになる' },
+        { origin: 'ゴールから逆算する', idea: '受け手が読む形で見せる', verdict: '採用', why: '「どう読まれるか」の気がかりに答える' },
+      ],
+    },
+  ],
+  hypotheses: [
+    { id: 'H1', text: '話し手は一人で端末に向かって答える。聞き手役の人は同席しない', steps: ['S2', 'S3', 'S4', 'S5'] },
+    { id: 'H2', text: '1回20分を3回ほどに分けて行う', steps: ['S1', 'S6'] },
+    { id: 'H3', text: '入力は文字。声で話したいときは端末の音声入力を使う', steps: ['S2', 'S3', 'S4', 'S5'] },
+    { id: 'H4', text: '受け手（後任）は、依頼の時点で決まっている', steps: ['S1'] },
+    { id: 'H5', text: '依頼者も、本人が渡すまで中身を見られない', steps: ['S1', 'S7'] },
+    { id: 'H6', text: '配車の実績データとの連携は、今回は行わない', steps: ['S2'] },
+    { id: 'H7', text: '受け手が判断メモを読んで使う側の道のりは、別のマップで扱う', steps: ['S7'] },
+  ],
+};
+/*MAP-END*/
+
+const STEP = Object.fromEntries(MAP.steps.map((s) => [s.id, s]));
+const STEP_IDS = MAP.steps.map((s) => s.id);
+const HYP = Object.fromEntries(MAP.hypotheses.map((h) => [h.id, h]));
+const htag = (id) => `<span class="htag" title="${esc(HYP[id] ? HYP[id].text : '')}">仮説 ${id}</span>`;
+
+/* =====================================================================
+   デモの台本（配車担当の佐藤さん）
+   ===================================================================== */
+const DEMO_META = {
+  speaker: '佐藤さん', role: '配車担当 22年', theme: '天気が崩れそうな日の配車',
+  successor: '木村さん', successorFull: '木村 遥さん', successorRole: '配車担当2年目',
+  requester: '山本部長', team: '北エリア配車チーム（5人）',
+};
+const DEMO_DATES = ['11月6日（金）', '11月9日（月）', '11月11日（水）'];
+const DEMO_GAPS = ['', '前回から3日', '前回から2日'];
+const VLABEL = { yes: 'そう', partly: '少し違う', no: '違う' };
+const CERTS = ['いつも', 'たいてい', '場合による'];
+
+const SAMPLE_CARD = {
+  id: 'sample', title: '角の潰れで、検品を厚くする',
+  if: '入荷したパレットの角が、2か所以上潰れている', then: 'その便の荷は、抜き取りをやめて全数を検品する',
+  unless: ['同じ荷主で、先月なにも出なかった便は抜き取りのまま'],
+  clues: ['角が潰れる便は、積み替えで雑に扱われている'], notClues: ['外箱のへこみ'],
+  pitfalls: ['外箱のへこみだけを見て、角を見ない'], quotes: ['箱より角。角が潰れてたら中もやられてる'],
+  certainty: 'たいてい', certSource: 'interview', ai: [],
+};
+
+const aiNote = (match, note) => ({ id: uid('a'), match, note, status: 'open' });
+function getCard(s, id) { return s.cards.find((c) => c.id === id) || null; }
+function cardNo(s, c) { return s.cards.indexOf(c) + 1; }
+function addEv(s, evs) {
+  evs.forEach((e) => {
+    const id = uid('e');
+    s.timeline.push({ id, time: e.time, text: e.text, fork: !!e.fork });
+    s.fresh.add(id);
+  });
+}
+function newCard(s, id, f) {
+  const c = Object.assign({ id, title: '', if: '', then: '', unless: [], clues: [], notClues: [], pitfalls: [], quotes: [], certainty: null, certSource: null, ai: [] }, f);
+  s.cards.push(c);
+  s.fresh.add(id);
+  return c;
+}
+function hyposInto(c, hypos, ans) {
+  hypos.forEach((h) => {
+    const a = ans[h.id] || {};
+    const fix = String(a.fix || '').trim();
+    if (a.v === 'yes') c.clues.push(h.clue || h.text);
+    else if (a.v === 'partly') {
+      if (fix && h.fix && fix === h.fix) { c.clues.push(h.fixClue); c.quotes.push(fix); if (h.partlyNot) c.notClues.push(h.partlyNot); }
+      else if (fix) { c.clues.push(fix); c.quotes.push(fix); }
+      else c.clues.push((h.clue || h.text) + '（一部違う）');
+    } else if (a.v === 'no') c.notClues.push(h.not || h.text);
+  });
+}
+
+const BEATS = [
+  {
+    step: 'S2', min: 1, topic: '天気のせいで段取りを変えた1日', type: 'text',
+    ai: '佐藤さん、よろしくお願いします。手順書にあることは聞きません。ある1日のことを伺います。\n最近、天気のせいで、いつもの段取りを変えた日はありましたか。1日だけ思い出してください。',
+    answer: '先週の火曜かな。朝から雨の予報で、北3便を30分早く出した日があった。',
+    apply(s) { s.day = { title: '10月27日（火）', sub: '朝から雨の予報。北3便を30分早く出した' }; s.fresh.add('day'); return 'ノートに「その日」の見出しを立てました'; },
+  },
+  {
+    step: 'S3', min: 3, topic: 'その日の朝の流れ', type: 'text',
+    ai: 'その日のことを、事務所に入ったところから順に聞かせてください。時刻はだいたいで大丈夫です。',
+    answer: '5時半に事務所に入って、まず雨雲レーダーを見た。西の山のほうに雲がかかってて、これは7時ごろ国道4号が混むなと思った。それで北3便の田中さんに電話して、6時に出てもらった。',
+    apply(s) {
+      addEv(s, [
+        { time: '05:30', text: '事務所に入る' },
+        { time: '05:35', text: '雨雲レーダーを見る。西の山に雲がかかっている', fork: true },
+        { time: '05:40', text: '「7時ごろ国道4号が混む」と読む' },
+        { time: '05:45', text: '北3便の田中さんに電話し、6:00出発に変える', fork: true },
+      ]);
+      return '出来事を4件書き留めました。判断が起きたところに「◆ 分かれ目」の印を付けています';
+    },
+  },
+  {
+    step: 'S3', min: 5, topic: '変えなかった便', type: 'text',
+    ai: 'ありがとうございます。その朝、変えなかった便はありますか。変えなかった理由も教えてください。',
+    answer: '南の便はそのまま。南は雨でも混まないから。北5便も早出させなかった。運転手が入ったばかりの子だったから。',
+    apply(s) {
+      addEv(s, [
+        { time: '05:50', text: '南ルートの便はそのまま（雨でも混まない）' },
+        { time: '05:50', text: '北5便（入ったばかりの運転手）は早出させない', fork: true },
+      ]);
+      return '「変えなかったこと」も2件書き留めました';
+    },
+  },
+  {
+    step: 'S4', min: 8, topic: 'レーダーを見て「混む」と読んだ理由', type: 'hypos',
+    ai: '05:35の分かれ目を詳しく伺います。レーダーを見て「混む」と読んだとき、見ていたのはこういうことでしょうか。合うもの、違うものを教えてください。',
+    hypos: [
+      { id: 'h1', text: '西から来る雨が、通勤の車が増える時間に国道4号にかかる', clue: '西からの雨が、通勤の時間に国道4号にかかる', expect: 'yes' },
+      { id: 'h2', text: 'レーダーの色が赤いか（雨が強いか）', expect: 'partly', fix: '色より雲の位置。西の山を越えてくるまで1時間半くらい', fixClue: '雲の位置（西の山を越えるまで約1時間半）', partlyNot: 'レーダーの色（雨の強さ）' },
+      { id: 'h3', text: '届け先の受付が早い日だった', not: '届け先の受付時刻', expect: 'no' },
+    ],
+    apply(s, ans) {
+      const c = newCard(s, 'c1', { title: '雨雲の位置を見て、北ルートを早める', if: '朝6時前の雨雲レーダーで、雨雲が西の山にかかっている', then: '北ルートの便を30分早く出す' });
+      hyposInto(c, this.hypos, ans);
+      c.ai = [
+        aiNote('北ルートの便', '「北ルートの便」を、国道4号を通る北1〜北5便のこととして書きました。'),
+        aiNote('30分', '早める幅を、10月27日の例から「30分」としました。'),
+      ];
+      return '05:35の分かれ目から、カード1を作りました。正してもらった手がかりを入れています';
+    },
+  },
+  {
+    step: 'S4', min: 10, topic: '後任ならどうするか', type: 'text',
+    ai: (s) => `もうひとつ伺います。${s.meta.successor}が同じレーダーを見たら、どうすると思いますか。`,
+    answer: 'たぶん雨の強さを見て、弱ければ何もしない。でも弱い雨でも混むんだよ、あそこは。',
+    apply(s, t) {
+      const c = getCard(s, 'c1'); if (!c) return null;
+      c.pitfalls.push('雨の強さだけを見て、弱ければ何もしない');
+      if (t.includes('弱い雨でも混む')) c.quotes.push('弱い雨でも混むんだよ、あそこは');
+      s.fresh.add(c.id);
+      return 'カード1に「新人がやりがちなこと」を足しました';
+    },
+  },
+  {
+    step: 'S5', min: 12, topic: '早めない日', type: 'text',
+    ai: 'ノートのカード1を見てください。雲が西の山にかかっていても、早めない日はありますか。',
+    answer: '土日は国道が空いてるから早めない。あと、お盆と年末は逆に1時間早める。',
+    apply(s) {
+      const c = getCard(s, 'c1'); if (!c) return null;
+      c.unless = ['土日は早めない（国道が空いている）', 'お盆と年末は、30分ではなく1時間早める'];
+      s.fresh.add(c.id);
+      return 'カード1の「ただし」に2件書きました';
+    },
+  },
+  {
+    step: 'S5', min: 13, topic: 'カード1の確かさ', type: 'scale', card: 'c1', expect: 'たいてい',
+    ai: 'カード1は、どれくらい当てはまりますか。言い切りの強さを選んでください。',
+    apply(s, v) { return `カード1の確かさを「${v}」にしました`; },
+  },
+  {
+    step: 'S4', min: 16, topic: '北5便を早出させなかった理由', type: 'hypos',
+    ai: '05:50の北5便の分かれ目を伺います。早出させなかったのは、こういう理由でしょうか。',
+    hypos: [
+      { id: 'h4', text: '入ったばかりの運転手に、暗い時間の雨の道を走らせたくなかった', clue: '暗い時間の雨の道は、新人に走らせない', expect: 'partly', fix: '暗いからじゃない。田中さんの後ろについて走らせて、道を覚えさせたかった', fixClue: 'ベテランの後ろについて走ると、道を覚えられる', partlyNot: '暗い時間かどうか' },
+      { id: 'h5', text: '新人の便は、もともと遅めの届け先にしている', not: '届け先の時間帯', expect: 'no' },
+    ],
+    apply(s, ans) {
+      const a = ans.h4 || {};
+      const fixed = a.v === 'partly' && String(a.fix || '').trim();
+      let c;
+      if (fixed) {
+        c = newCard(s, 'c2', { title: '新人の便は、ベテランの便に付けて出す', if: '入ったばかりの運転手の便がある日', then: 'ベテランの便と同じ時刻に出し、後ろについて走らせる' });
+        c.ai = [aiNote('ベテランの便と同じ時刻', '「田中さんの後ろについて」を、ベテランの便と同じ時刻に出すことと読みました。')];
+      } else {
+        c = newCard(s, 'c2', { title: '新人の便は、雨の日に早出させない', if: '入ったばかりの運転手の便がある雨の日', then: a.v === 'yes' ? '早出させず、明るくなってから出す' : '早出させない（理由はまだ伺えていません）' });
+        c.ai = [aiNote('雨の日', '雨の日に限った判断として書きました。晴れの日も同じですか。')];
+      }
+      hyposInto(c, this.hypos, ans);
+      return '05:50の分かれ目から、カード2を作りました';
+    },
+  },
+  {
+    step: 'S6', min: 19, topic: '', type: 'wrap',
+    ai: (s) => `${s.session}回目はここまでです。ありがとうございました。言いかけていたことや、次に話したいことがあれば、1行だけ残してください。`,
+    memo: '帰りの便も雨で変える。荷主さんへの連絡の話もしたい',
+  },
+  {
+    step: 'S3', min: 2, topic: '荷主さんへの連絡のタイミング', type: 'text',
+    ai: (s) => (s.memo ? `前回の続きです。メモに「${s.memo}」とありました。まず連絡のことから伺います。` : '前回の続きです。') + '\n10月27日（火）、北3便を早めたことを、誰にいつ伝えましたか。',
+    answer: '6時半に、届け先の物流センターの受付に電話した。鈴木さんっていう人。着くのが早まるって言っておかないと、バースが空いてなくて待たされる。',
+    apply(s) {
+      addEv(s, [{ time: '06:30', text: '届け先の受付（鈴木さん）に電話。早く着くと伝える', fork: true }]);
+      const c = newCard(s, 'c3', { title: '早めた便は、着く前に受付へ伝える', if: '便を早めた日', then: '6時半に、届け先の受付へ電話で「早く着く」と伝える' });
+      c.clues.push('伝えておかないと、バースが空いておらず待たされる');
+      c.quotes.push('着くのが早まるって言っておかないと、バースが空いてなくて待たされる');
+      c.ai = [aiNote('6時半', '電話する時刻を、10月27日の例から「6時半」としました。受付が開く時刻に合わせていますか。')];
+      return '出来事を1件書き留め、カード3を作りました';
+    },
+  },
+  {
+    step: 'S4', min: 5, topic: '伝え忘れたとき', type: 'text',
+    ai: '伝え忘れると、どうなりますか。',
+    answer: '1時間待たされたことがある。そうなると後の便が全部ずれる。',
+    apply(s, t) {
+      const c = getCard(s, 'c3'); if (!c) return null;
+      c.pitfalls.push('伝え忘れて、バースが空くまで1時間待たされる。後の便が全部ずれる');
+      if (t.includes('1時間待たされた')) c.quotes.push('1時間待たされたことがある。そうなると後の便が全部ずれる');
+      s.fresh.add(c.id);
+      return 'カード3に「新人がやりがちなこと」を足しました';
+    },
+  },
+  {
+    step: 'S7', type: 'toReview', topic: '書き起こしの確認',
+    ai: (s) => `ありがとうございました。判断カードが${s.cards.length}枚になりました。最後に、AIが補ったところだけを確かめてもらいます。`,
+  },
+];
+
+/* =====================================================================
+   状態
+   ===================================================================== */
+function freshState(mode, meta) {
+  return {
+    mode, screen: 'invite', step: 'S1', session: 1, beat: -1, min: 0,
+    msgs: [], timeline: [], cards: [], day: null,
+    memo: '', memoDraft: '', pausing: false, pendingBeat: 0, pendingResumed: false,
+    draft: '', thinking: false, thinkStart: 0, err: null,
+    fresh: new Set(), mtab: 'talk', reader: false, fixing: null, rcpB: false,
+    liveSetup: false, liveForm: { theme: '', name: '', role: '', succ: '' }, confirmDiscard: false,
+    meta: meta || DEMO_META, startedAt: Date.now(), pausedAt: null, ready: false, copied: '',
+  };
+}
+let st = freshState('demo');
+let view = 'prototype';
+let mapRendered = false;
+let mapFocus = null;
+let pendingFocus = null;
+let lastAnnounced = null;
+const UKEY = 'kikigaki-ui-v1';
+const LKEY = 'kikigaki-live-v1';
+const ui = Object.assign({ notes: true }, store.get(UKEY) || {});
+
+/* AIの聞き手（sample 機能） */
+let sampleFn = null;
+let sampleState = 'checking';
+let liveCtl = null;
+let liveBlocked = false;
+const HIDE_CODES = ['not_granted', 'sampling_disabled', 'not_declared', 'capability_disabled', 'capability_removed'];
+if (window.claude && typeof window.claude.use === 'function') {
+  window.claude.use('sample').then((f) => { sampleFn = f || null; sampleState = f ? 'yes' : 'no'; if (st.liveSetup) render(); })
+    .catch(() => { sampleState = 'no'; if (st.liveSetup) render(); });
+} else {
+  sampleState = 'no';
+}
+
+function lastAi(s = st) { for (let i = s.msgs.length - 1; i >= 0; i--) if (s.msgs[i].role === 'ai') return s.msgs[i]; return null; }
+function weekday(d) { return '日月火水木金土'[d.getDay()]; }
+function todayLabel() { const d = new Date(); return `${d.getMonth() + 1}月${d.getDate()}日（${weekday(d)}）`; }
+function sessionDate(n) { return st.mode === 'demo' ? (DEMO_DATES[n - 1] || '') : todayLabel(); }
+function sinceLabel(t) {
+  if (!t) return '';
+  const h = (Date.now() - t) / 3600000;
+  if (h < 1) return '前回から数分';
+  if (h < 24) return `前回から${Math.round(h)}時間`;
+  return `前回から${Math.round(h / 24)}日`;
+}
+function elapsedMin() { return Math.max(0, Math.floor((Date.now() - (st.startedAt || Date.now())) / 60000)); }
+
+/* =====================================================================
+   デモの進行
+   ===================================================================== */
+function showBeat(i, resumed) {
+  const b = BEATS[i]; if (!b) return;
+  st.beat = i; st.step = b.step; if (b.min != null) st.min = b.min;
+  let text = typeof b.ai === 'function' ? b.ai(st) : b.ai;
+  if (resumed) text = '前回の続きから伺います。\n' + text;
+  const m = { id: uid('m'), role: 'ai', text, kind: b.type };
+  if (b.type === 'hypos') m.hypos = b.hypos.map((h) => ({ id: h.id, text: h.text, v: null, fix: '' }));
+  if (b.type === 'scale') m.scale = { card: b.card, v: null };
+  st.msgs.push(m);
+  st.draft = b.type === 'text' ? b.answer : '';
+  if (b.type === 'wrap') { st.pausing = 'wrap'; st.memoDraft = b.memo; }
+  st.scrollEnd = true;
+  if (b.type === 'text' && finePointer() && !narrow()) pendingFocus = '#draft';
+}
+function proceed(note, instant) {
+  if (note) st.msgs.push({ id: uid('m'), role: 'sys', text: note });
+  const next = st.beat + 1;
+  if (instant) { showBeat(next); return; }
+  st.thinking = true; st.scrollEnd = true; render();
+  const mine = st;
+  setTimeout(() => { if (st !== mine) return; st.thinking = false; showBeat(next); render(); }, reduceMotion ? 150 : 750);
+}
+function sendText(text, instant) {
+  const t = String(text || '').trim();
+  if (!t || st.thinking) return;
+  st.fresh = new Set();
+  st.msgs.push({ id: uid('m'), role: 'me', text: t });
+  st.draft = '';
+  if (st.mode === 'demo') proceed(BEATS[st.beat].apply(st, t), instant);
+  else liveTurn();
+}
+function sendHypos(instant) {
+  const m = lastAi();
+  if (!m || !m.hypos || m.answered || m.hypos.some((h) => !h.v) || st.thinking) return;
+  m.answered = true;
+  st.fresh = new Set();
+  const ans = Object.fromEntries(m.hypos.map((h) => [h.id, { v: h.v, fix: h.fix }]));
+  const text = '仮説への答え:\n' + m.hypos.map((h, i) => `${i + 1}.「${h.text}」→ ${VLABEL[h.v]}${h.v === 'partly' && h.fix.trim() ? '（直し: ' + h.fix.trim() + '）' : ''}`).join('\n');
+  st.msgs.push({ id: uid('m'), role: 'me', text, hans: m.hypos.map((h) => ({ text: h.text, v: h.v, fix: h.fix.trim() })) });
+  if (st.mode === 'demo') { const b = BEATS[st.beat]; proceed(b.apply(st, ans), instant); }
+  else liveTurn();
+}
+function sendScale(v, instant) {
+  const m = lastAi();
+  if (!m || !m.scale || m.answered || st.thinking) return;
+  m.scale.v = v; m.answered = true;
+  st.fresh = new Set();
+  const c = getCard(st, m.scale.card);
+  if (c) { c.certainty = v; c.certSource = 'interview'; st.fresh.add(c.id); }
+  st.msgs.push({ id: uid('m'), role: 'me', text: `${c ? 'カード' + cardNo(st, c) + '（' + c.title + '）' : 'カード'}の確かさ: ${v}` });
+  if (st.mode === 'demo') proceed(BEATS[st.beat].apply(st, v), instant);
+  else liveTurn();
+}
+function doPause(memo) {
+  st.memo = memo || '';
+  st.memoDraft = '';
+  if (st.mode === 'demo') {
+    const b = BEATS[st.beat];
+    const isWrap = b && b.type === 'wrap';
+    st.pendingBeat = isWrap ? st.beat + 1 : st.beat;
+    st.pendingResumed = !isWrap;
+  }
+  st.pausing = false; st.screen = 'resume'; st.step = 'S6'; st.pausedAt = Date.now();
+  saveLive();
+}
+function doResume() {
+  st.session += 1;
+  st.msgs.push({ id: uid('m'), role: 'divider', text: `${st.session}回目 · ${sessionDate(st.session)}` });
+  st.screen = 'interview'; st.startedAt = Date.now(); st.fresh = new Set();
+  if (st.mode === 'demo') { showBeat(st.pendingBeat, st.pendingResumed); return; }
+  st.msgs.push({ id: uid('m'), role: 'meta', text: `（${st.session}回目を始めます。前回の最後に話し手が残したメモ:「${st.memo || 'なし'}」。メモがあればそこから、なければ前回の続きから聞いてください。最初の問いは「前回の続きです。」で始めてください）` });
+  liveTurn();
+}
+function autoAnswer(i) {
+  const b = BEATS[i];
+  if (b.type === 'text') sendText(b.answer, true);
+  else if (b.type === 'hypos') {
+    const m = lastAi();
+    m.hypos.forEach((h) => { const src = b.hypos.find((x) => x.id === h.id); h.v = src.expect; h.fix = src.expect === 'partly' ? src.fix : ''; });
+    sendHypos(true);
+  } else if (b.type === 'scale') sendScale(b.expect, true);
+  else if (b.type === 'wrap') { doPause(b.memo); doResume(); }
+}
+function jumpTo(stepId) {
+  if (liveCtl) liveCtl.abort();
+  st = freshState('demo');
+  pendingFocus = null;
+  if (stepId !== 'S1') {
+    st.screen = 'interview';
+    st.msgs.push({ id: uid('m'), role: 'divider', text: `1回目 · ${DEMO_DATES[0]}` });
+    const wrapIdx = BEATS.findIndex((b) => b.type === 'wrap');
+    const target = stepId === 'S6' ? wrapIdx : stepId === 'S7' ? BEATS.length - 1 : BEATS.findIndex((b) => b.step === stepId);
+    showBeat(0);
+    for (let i = 0; i < target; i++) autoAnswer(i);
+    if (stepId === 'S6') doPause(BEATS[wrapIdx].memo);
+    if (stepId === 'S7') { st.screen = 'review'; st.step = 'S7'; }
+    st.fresh = new Set();
+    pendingFocus = null;
+  }
+  render();
+}
+
+/* =====================================================================
+   AIの聞き手（自分の業務で試す）
+   ===================================================================== */
+function rulesText(m) {
+  return `あなたはインタビューアプリ「キキガキ」の聞き手です。熟練者に1問ずつ質問し、手順書に書かれていない業務の判断（何を手がかりに、どう決め、いつ例外にするか）を引き出して、後任が読める「判断カード」に書き留めます。
+
+## 今回のインタビュー
+- 話し手: ${m.speaker}（${m.role}）
+- テーマ: ${m.theme}
+- 判断メモを受け取る人: ${m.successor}
+- いま ${st.session} 回目
+
+## 聞き方のきまり
+1. 一般論や手順は聞かない。まず、テーマに当てはまる最近の具体的な1日（1件）を思い出してもらう。
+2. その1件を時刻順に話してもらい、出来事を timeline_add に入れる。判断が起きた点は fork を true にする。変えなかったこと、しなかったことも聞く。
+3. 分かれ目の理由を「なぜ？」と白紙で聞かない。そのとき見ていた手がかりの仮説を2〜3個 hypotheses に出し、正してもらう。仮説は互いに違う方向にする。
+4. 仮説への答えのうち「そう」は clues、「少し違う」は本人の直しを clues と quotes、「違う」は not_clues に入れる。
+5. 「${m.successor}ならどうすると思いますか」と対比で聞き、新人がやりがちなことを pitfalls に入れる。
+6. unless（ただし）が空のカードがあれば「当てはまらない日はありますか」と聞く。unless が埋まったカードは ask_certainty_card にその id を入れ、確かさを聞く。そのとき hypotheses は [] にする。
+7. 質問は1回に1つ、2文以内。です・ます調で短く。相手の言葉の繰り返しは最小限にする。
+8. quotes は本人の発言からそのまま抜き出す。言い換えない。
+9. 本人が言っていないことをカードに書いたら、その語句を ai_notes に {"match": カードの文中にある語句そのまま, "note": 何をどう補ったかと、確かめる問い} として必ず入れる。
+10. カードが2〜3枚そろい、例外まで聞けたら ready_for_review を true にし、question は「最後に書き起こしを確かめてください」という案内にする。
+11. 話し手がテーマから大きく外れたら、やさしくテーマの1件に戻す。`;
+}
+const OUTPUT_SPEC = `## 返し方
+次の形のJSONオブジェクトを1つだけ返す。前後に説明を付けない。
+{"step":"S3","day_title":null,"question":"次の問い","hypotheses":[],"ask_certainty_card":null,"timeline_add":[{"time":"05:30","text":"出来事","fork":false}],"cards":[{"id":"c1","title":"判断の見出し","if":"条件","then":"すること","unless":[],"clues":[],"not_clues":[],"pitfalls":[],"quotes":[],"ai_notes":[{"match":"語句","note":"補った内容と確かめる問い"}]}],"ready_for_review":false}
+- step: S2=1件を思い出してもらう, S3=その日の流れを聞く, S4=理由を正してもらう・対比で聞く, S5=例外と確かさを聞く
+- day_title: 話している1件の見出し（例: 10月27日（火）雨の予報）。まだ分からなければ null
+- hypotheses: 理由を正してもらうときだけ2〜3個の文字列。ほかは []
+- ask_certainty_card: 確かさを聞くカードの id。ほかは null
+- timeline_add: 今回の発言で新しく分かった出来事だけ。text は30字以内。時刻が分からなければ "—"
+- cards: 今回作ったカードと変えたカードだけを、全項目入りで入れる。変えていなければ []。id は c1, c2 … の続き番号。title は20字以内。if と then には「もし」「なら」を付けない`;
+
+function buildPrompt() {
+  const m = st.meta;
+  const notebook = {
+    day: st.day ? st.day.title : null,
+    timeline: st.timeline.map((e) => ({ time: e.time, text: e.text, fork: e.fork })),
+    cards: st.cards.map((c) => ({ id: c.id, title: c.title, if: c.if, then: c.then, unless: c.unless, clues: c.clues, not_clues: c.notClues, pitfalls: c.pitfalls, quotes: c.quotes, certainty: c.certainty, ai_notes: c.ai.map((a) => ({ match: a.match, note: a.note })) })),
+  };
+  const lines = [];
+  st.msgs.filter((x) => x.role === 'ai' || x.role === 'me' || x.role === 'meta').slice(-30).forEach((x) => {
+    if (x.role === 'ai') {
+      lines.push('聞き手: ' + x.text);
+      if (x.hypos) x.hypos.forEach((h, i) => lines.push(`  仮説${i + 1}: ${h.text}`));
+      if (x.scale) lines.push(`  （${x.scale.card} の確かさを「いつも／たいてい／場合による」から選んでもらった）`);
+    } else if (x.role === 'me') lines.push(`${m.speaker}: ${x.text}`);
+    else lines.push(x.text);
+  });
+  return rulesText(m) + '\n\n## いまのノート（JSON）\n' + JSON.stringify(notebook) + '\n\n## これまでのやりとり\n' + (lines.join('\n') || '（まだありません。あいさつを1文入れて、最初の問いを出してください）') + '\n\n' + OUTPUT_SPEC;
+}
+const arr = (v) => (Array.isArray(v) ? v.map((x) => String(x == null ? '' : x).trim()).filter(Boolean) : null);
+function mergeCard(rc) {
+  if (!rc || typeof rc !== 'object' || !rc.id) return null;
+  const id = String(rc.id);
+  let c = getCard(st, id);
+  const isNew = !c;
+  if (!c) c = newCard(st, id, {});
+  if (rc.title) c.title = String(rc.title);
+  if (rc.if) c.if = String(rc.if);
+  if (rc.then) c.then = String(rc.then);
+  [['unless', 'unless'], ['clues', 'clues'], ['not_clues', 'notClues'], ['pitfalls', 'pitfalls'], ['quotes', 'quotes']].forEach(([k, f]) => { const a = arr(rc[k]); if (a) c[f] = a; });
+  if (Array.isArray(rc.ai_notes)) {
+    const old = new Map(c.ai.map((a) => [a.match, a]));
+    c.ai = rc.ai_notes.filter((a) => a && a.match).map((a) => old.get(String(a.match)) || aiNote(String(a.match), String(a.note || '')));
+  }
+  st.fresh.add(id);
+  return isNew ? 'new' : `カード${cardNo(st, c)}`;
+}
+function applyLive(r) {
+  if (!r || typeof r !== 'object' || Array.isArray(r)) throw { code: 'invalid_json' };
+  st.fresh = new Set();
+  if (typeof r.day_title === 'string' && r.day_title.trim() && (!st.day || st.day.title !== r.day_title.trim())) { st.day = { title: r.day_title.trim(), sub: st.day ? st.day.sub : '' }; st.fresh.add('day'); }
+  let nEv = 0;
+  if (Array.isArray(r.timeline_add)) {
+    const evs = r.timeline_add.filter((e) => e && e.text).map((e) => ({ time: String(e.time || '—').slice(0, 8), text: String(e.text), fork: !!e.fork }));
+    addEv(st, evs); nEv = evs.length;
+  }
+  let nNew = 0; const upd = [];
+  if (Array.isArray(r.cards)) r.cards.forEach((rc) => { const res = mergeCard(rc); if (res === 'new') nNew++; else if (res) upd.push(res); });
+  const parts = [];
+  if (nEv) parts.push(`出来事を${nEv}件`);
+  if (nNew) parts.push(`判断カードを${nNew}枚`);
+  const notes = [parts.length ? 'ノートに' + parts.join('、') + '書き留めました' : '', upd.length ? upd.join('・') + 'を書き直しました' : ''].filter(Boolean).join('。');
+  if (notes) st.msgs.push({ id: uid('m'), role: 'sys', text: notes });
+  if (['S2', 'S3', 'S4', 'S5'].includes(r.step)) st.step = r.step;
+  const m = { id: uid('m'), role: 'ai', text: String(r.question || '').trim() || '続けて聞かせてください。' };
+  const cc = r.ask_certainty_card ? getCard(st, String(r.ask_certainty_card)) : null;
+  if (cc) m.scale = { card: cc.id, v: null };
+  else if (Array.isArray(r.hypotheses) && r.hypotheses.length) m.hypos = r.hypotheses.slice(0, 3).map((t, i) => ({ id: 'h' + (i + 1), text: String(t), v: null, fix: '' }));
+  st.msgs.push(m);
+  st.ready = !!r.ready_for_review;
+}
+function errCopy(code) {
+  switch (code) {
+    case 'not_granted': return 'このページからAIを使う許可がありません。デモはそのまま見られます。';
+    case 'sampling_disabled': case 'not_declared': case 'capability_disabled': case 'capability_removed':
+      return 'この環境ではAIの聞き手を使えません。デモはそのまま見られます。';
+    case 'rate_limited': return 'AIへの問い合わせが続いたため、少し待つ必要があります。時間をおいて「もう一度送る」を選んでください。';
+    case 'session_expired': return 'claude.ai へのサインインが切れました。サインインし直してから、もう一度送ってください。';
+    case 'prompt_too_large': return 'やりとりが長くなりすぎました。いったん中断して、書き起こしを確かめてください。';
+    case 'invalid_json': case 'empty_completion': return 'AIの返事を読み取れませんでした。もう一度送ってください。';
+    case 'refused': return 'AIがこの内容には答えませんでした。言い方を変えて、もう一度話してください。';
+    default: return 'AIとの通信が途中で切れました。もう一度送ってください。';
+  }
+}
+async function liveTurn() {
+  if (!sampleFn) {
+    st.err = { msg: sampleState === 'checking' ? 'AIの聞き手を準備しています。数秒おいて「もう一度送る」を選んでください。' : 'AIの聞き手は、claude.ai でこのページを開いたときに使えます。', retry: sampleState === 'checking' };
+    render(); return;
+  }
+  const ctl = new AbortController();
+  liveCtl = ctl;
+  st.thinking = true; st.err = null; st.thinkStart = Date.now(); st.scrollEnd = true;
+  render();
+  const mine = st;
+  try {
+    const r = await sampleFn.json(buildPrompt(), { modelTier: 'quick', cache: false, signal: ctl.signal });
+    if (st !== mine) return;
+    applyLive(r);
+    if (finePointer() && !narrow()) pendingFocus = '#draft';
+  } catch (e) {
+    if (st !== mine) return;
+    const code = e && e.code;
+    if (code === 'cancelled') st.err = { msg: '止めました。「もう一度送る」で、同じところから聞き直します。', retry: true };
+    else {
+      if (HIDE_CODES.includes(code)) liveBlocked = true;
+      st.err = { msg: errCopy(code), retry: !HIDE_CODES.includes(code) };
+    }
+  } finally {
+    if (st === mine) { st.thinking = false; liveCtl = null; st.scrollEnd = true; saveLive(); render(); }
+  }
+}
+function saveLive() {
+  if (st.mode !== 'live') return;
+  const o = Object.assign({}, st, { fresh: [], thinking: false, err: null, savedAt: Date.now() });
+  store.set(LKEY, o);
+}
+function loadLive() {
+  const o = store.get(LKEY);
+  if (!o || o.mode !== 'live' || !o.meta) return null;
+  o.fresh = new Set(); o.thinking = false; o.err = null; o.liveSetup = false;
+  return o;
+}
+function startLive(f) {
+  const theme = (f.theme || '').trim();
+  if (!theme) { pendingFocus = '#lf-theme'; render(); return; }
+  const name = (f.name || '').trim();
+  const speaker = name ? (/(さん|様)$/.test(name) ? name : name + 'さん') : 'あなた';
+  let succ = (f.succ || '').trim();
+  succ = succ ? (/(さん|様|たち|チーム|部|課)$/.test(succ) ? succ : succ + 'さん') : '後任の方';
+  if (liveCtl) liveCtl.abort();
+  st = freshState('live', { speaker, role: (f.role || '').trim() || '担当者', theme, successor: succ, successorFull: succ, live: true });
+  st.screen = 'interview'; st.step = 'S2';
+  st.msgs.push({ id: uid('m'), role: 'divider', text: `1回目 · ${todayLabel()}` });
+  liveTurn();
+}
+
+/* =====================================================================
+   描画
+   ===================================================================== */
+function markText(text, ais, numFn) {
+  let segs = [{ t: String(text || ''), a: null }];
+  ais.slice().sort((x, y) => y.match.length - x.match.length).forEach((a) => {
+    if (!a.match) return;
+    const next = [];
+    segs.forEach((s) => {
+      if (s.a) { next.push(s); return; }
+      const parts = s.t.split(a.match);
+      parts.forEach((p, i) => { if (p) next.push({ t: p, a: null }); if (i < parts.length - 1) next.push({ t: a.match, a }); });
+    });
+    segs = next;
+  });
+  return segs.map((s) => (s.a ? `<mark class="aim" data-ai="${s.a.id}"${numFn ? ' data-action="find-q"' : ''}>${esc(s.t)}${numFn ? `<sup>${numFn(s.a)}</sup>` : ''}</mark>` : esc(s.t))).join('');
+}
+function renderCard(c, n, o = {}) {
+  const open = o.reader ? [] : c.ai.filter((a) => a.status === 'open');
+  const mk = (t) => (o.reader ? esc(t) : markText(t, open, o.aiNum));
+  const unless = c.unless.length ? `<ul>${c.unless.map((u) => `<li>${mk(u)}</li>`).join('')}</ul>` : '<span class="empty">まだ伺っていません</span>';
+  const cert = c.certainty ? `<span class="cert">確かさ：${esc(c.certainty)}</span>` : '<span class="cert unset">確かさ：未定</span>';
+  const clues = c.clues.length ? `<div class="sub"><span class="sub-label">理由・手がかり</span><div class="chips">${c.clues.map((x) => `<span class="chip">${mk(x)}</span>`).join('')}</div></div>` : '';
+  const nots = c.notClues.length ? `<div class="sub"><span class="sub-label">決め手ではないもの</span><div class="chips">${c.notClues.map((x) => `<span class="chip not">${mk(x)}</span>`).join('')}</div></div>` : '';
+  const pits = c.pitfalls.length ? `<div class="sub"><span class="sub-label">新人がやりがちなこと</span>${c.pitfalls.map((x) => `<p class="pitfall">${mk(x)}</p>`).join('')}</div>` : '';
+  const quotes = c.quotes.map((q) => `<blockquote class="quote">「${esc(String(q).replace(/^「|」$/g, ''))}」<cite>${esc(o.speaker || '')}</cite></blockquote>`).join('');
+  const foot = o.foot && open.length ? `<p class="card-foot">AIの補い ${open.length}件 · 最後にまとめて確かめます</p>` : '';
+  const fresh = o.fresh && o.fresh.has(c.id) ? ' fresh-card' : '';
+  return `<article class="card${fresh}" id="${o.idp || ''}${esc(c.id)}">
+    <header class="card-head"><span class="card-no">カード${n}</span><h4>${mk(c.title)}</h4>${cert}</header>
+    <dl class="ifthen"><div><dt>もし</dt><dd>${mk(c.if)}</dd></div><div><dt>なら</dt><dd>${mk(c.then)}</dd></div><div><dt>ただし</dt><dd>${unless}</dd></div></dl>
+    ${clues}${nots}${pits}${quotes}${foot}
+  </article>`;
+}
+function renderTimeline(evs, fresh) {
+  return `<ol class="timeline">${evs.map((e) => `<li class="ev${e.fork ? ' fork' : ''}${fresh && fresh.has(e.id) ? ' fresh' : ''}"><time>${esc(e.time)}</time><span class="rail-col"><span class="dot"></span></span><p>${esc(e.text)}${e.fork ? '<span class="fork-tag">◆ 分かれ目</span>' : ''}</p></li>`).join('')}</ol>`;
+}
+
+function curStepIdx() {
+  if (st.screen === 'invite') return 0;
+  if (st.screen === 'resume') return 5;
+  if (st.screen === 'review' || st.screen === 'done') return 6;
+  const i = STEP_IDS.indexOf(st.step);
+  return i < 0 ? 1 : i;
+}
+function renderRailbar() {
+  const cur = curStepIdx();
+  const live = st.mode === 'live';
+  const items = MAP.steps.map((s, i) => {
+    const cls = st.screen === 'done' || i < cur ? 'done' : i === cur ? 'cur' : '';
+    return `<li class="${cls}"><button type="button" data-action="goto-step" data-step="${s.id}"${live ? ' disabled title="自分の業務で話している間は、ステップを飛べません"' : ''}${i === cur ? ' aria-current="step"' : ''}><span class="num">${s.id}</span>${esc(s.short)}</button></li>`;
+  }).join('');
+  const s = STEP[STEP_IDS[cur]];
+  const why = ui.notes ? `<div class="why">
+      <div class="why-k"><span class="tag">設計の根拠</span><b>${s.id} ${esc(s.name)}</b><a href="#map" data-action="to-map-step" data-step="${s.id}">マップで見る →</a></div>
+      <dl><div><dt>思考の視線</dt><dd>${esc(s.gaze)}</dd></div><div><dt>ギャップ</dt><dd>${esc(s.gap)}</dd></div><div><dt>到達方法</dt><dd>${esc(s.method)}</dd></div></dl>
+    </div>` : '';
+  $('#railbar').innerHTML = `<div class="railhead"><span class="railtitle">${live ? 'AIの聞き手 · ' + esc(st.meta.theme) : 'デモ：配車担当の佐藤さんの場合（ステップを押すと、その場面に飛べます）'}</span>
+    <div class="railtools"><button class="linkbtn" type="button" data-action="toggle-notes" aria-pressed="${ui.notes}">${ui.notes ? '設計メモを隠す' : '設計メモを表示'}</button>${live ? '<button class="linkbtn" type="button" data-action="to-demo">デモに戻る</button>' : '<button class="linkbtn" type="button" data-action="reset">最初から</button>'}</div></div>
+    <ol class="rail" aria-label="ゴールまでのステップ">${items}</ol>${why}`;
+  document.body.classList.toggle('notes-off', !ui.notes);
+}
+
+function renderInvite() {
+  const m = DEMO_META;
+  const saved = loadLive();
+  let banner = '';
+  if (saved) {
+    const n = saved.cards.length;
+    banner = `<div class="banner" role="status"><p>自分の業務のインタビュー「${esc(saved.meta.theme)}」が${saved.screen === 'done' ? 'できあがっています' : '途中です'}（判断カード ${n}枚）。</p>
+      <button class="btn small primary" data-action="live-continue">${saved.screen === 'done' ? '判断メモを開く' : '続きから'}</button>
+      <button class="btn small ghost" data-action="live-discard">${st.confirmDiscard ? '本当に消す' : '消す'}</button></div>`;
+  }
+  const avail = sampleState === 'yes' ? '<p class="avail">AIの利用には、あなたの Claude の利用枠が使われます。最初の1回だけ、利用の許可を求める画面が出ます。</p>'
+    : sampleState === 'checking' ? '<p class="avail">AIの聞き手を準備しています…</p>'
+      : '<p class="avail no">AIの聞き手は、claude.ai でこのページを開いたときに使えます。この環境ではデモだけを見られます。</p>';
+  const f = st.liveForm;
+  const setup = st.liveSetup ? `<form class="livesetup" data-form="live" id="liveform">
+      <h2>自分の業務で試す</h2>
+      <p class="intro">AIが聞き手になって、あなたの業務の判断を伺います。流れはデモと同じです。ある1日を思い出し、流れを話し、AIの仮説を正し、例外を決めて、最後に補いを確かめます。</p>
+      <div class="field"><label for="lf-theme">話すテーマ（いつもと違う判断をする場面）</label><input type="text" id="lf-theme" data-lf="theme" value="${esc(f.theme)}" placeholder="例：月末の請求書チェックで、差し戻すかどうか"></div>
+      <div class="field-row">
+        <div class="field"><label for="lf-name">呼ばれ方</label><input type="text" id="lf-name" data-lf="name" value="${esc(f.name)}" placeholder="例：高橋"></div>
+        <div class="field"><label for="lf-role">あなたの仕事と年数</label><input type="text" id="lf-role" data-lf="role" value="${esc(f.role)}" placeholder="例：経理 15年"></div>
+      </div>
+      <div class="field"><label for="lf-succ">判断メモを受け取る人</label><input type="text" id="lf-succ" data-lf="succ" value="${esc(f.succ)}" placeholder="例：後任の小林"></div>
+      ${avail}
+      <div class="cta-row"><button class="btn primary" type="submit"${sampleState === 'no' || liveBlocked ? ' disabled' : ''}>AIの聞き手と始める</button><button class="btn ghost" type="button" data-action="live-cancel">やめる</button></div>
+    </form>` : '';
+  return `<section class="wrap invite">
+    ${banner}
+    <div class="letter">
+      <p class="eyebrow">インタビューの依頼 · 11月4日（水）</p>
+      <p class="from"><span class="avatar" aria-hidden="true">山</span>${esc(m.requester)}（物流部）から ${esc(m.speaker)}へ</p>
+      <h1 class="display">${esc(m.theme)}を、${esc(m.successor)}に残すためのインタビュー</h1>
+      <p class="lead">${esc(m.speaker)}がふだん頭の中でしている判断を、AIの聞き手が伺って書き留めます。手順書に書いてあることは聞きません。うまく説明できなくても大丈夫です。AIが出す言い方を、正してもらうだけで進みます。</p>
+    </div>
+    <div class="facts">
+      <section class="fact"><h2>誰のために${htag('H4')}</h2><p class="person"><span class="avatar" aria-hidden="true">木</span><span><b>${esc(m.successorFull)}</b> · ${esc(m.successorRole)}</span></p><p class="fine">4月から北エリアの配車を引き継ぎます</p></section>
+      <section class="fact"><h2>誰が見られるか${htag('H5')}</h2><p>${esc(m.speaker)}が「渡す」を選ぶまで、${esc(m.speaker)}以外は誰も見られません。${esc(m.requester)}も見られません。</p><p class="fine">渡す前に、AIが補ったところをすべて確かめてもらいます。</p></section>
+      <section class="fact"><h2>かかる時間${htag('H2')}</h2><p class="big">20分 × 3回ほど</p><p class="fine">途中でやめても、続きから始められます。</p></section>
+    </div>
+    <div class="sample-wrap">
+      <div class="sample-note"><h2>残るもの</h2><p>話した内容は、こんな「判断カード」になって${esc(m.successor)}に届きます。「もし・なら・ただし」の3段で書き、${esc(m.speaker)}の言葉はそのまま引用します。</p></div>
+      <div class="gridsheet"><p class="caption">見本：入荷検品を15年担当している森さんの判断メモから</p>${renderCard(SAMPLE_CARD, 1, { speaker: '森さん', reader: true })}</div>
+    </div>
+    <div class="cta-row">
+      <button class="btn primary" data-action="start">1回目を始める（20分）</button>
+      ${st.liveSetup ? '' : '<button class="btn ghost" data-action="live-setup">自分の業務で試す（AIが聞き手）</button>'}
+    </div>
+    ${setup}
+  </section>`;
+}
+
+function renderMsg(m) {
+  const sp = esc(st.meta.speaker);
+  if (m.role === 'divider') return `<div class="divider"><span>${esc(m.text)}</span></div>`;
+  if (m.role === 'meta') return '';
+  if (m.role === 'sys') return `<p class="msg sys"><span class="sys-k">ノート</span><span>${esc(m.text)}</span></p>`;
+  if (m.role === 'me') {
+    if (m.hans) return `<div class="msg me"><div class="who">${sp}</div><ol class="ans">${m.hans.map((h) => `<li><span class="v v-${h.v}">${VLABEL[h.v]}</span><span>${esc(h.text)}${h.v === 'partly' && h.fix ? `<span class="fixline">→「${esc(h.fix)}」</span>` : ''}</span></li>`).join('')}</ol></div>`;
+    return `<div class="msg me"><div class="who">${sp}</div><p>${esc(m.text)}</p></div>`;
+  }
+  const active = m === lastAi() && !m.answered && !st.thinking && !st.err;
+  let extra = '';
+  if (m.hypos) extra = renderHypos(m, active);
+  else if (m.scale && active) extra = renderScale();
+  return `<div class="msg ai"><div class="who">聞き手（AI）</div><p class="q">${esc(m.text)}</p>${extra}</div>`;
+}
+function renderHypos(m, active) {
+  const items = m.hypos.map((h, i) => {
+    const seg = active ? `<div class="seg" role="group" aria-label="仮説${i + 1}への答え">${['yes', 'partly', 'no'].map((v) => `<button type="button" data-action="hv" data-h="${h.id}" data-v="${v}" aria-pressed="${h.v === v}">${VLABEL[v]}</button>`).join('')}</div>` : (h.v ? `<span class="v v-${h.v}" style="justify-self:start">${VLABEL[h.v]}</span>` : '');
+    const fix = active && h.v === 'partly' ? `<label class="fix" for="fix-${h.id}"><span>どこが違いますか（ひとことで）</span><input type="text" id="fix-${h.id}" data-fix="${h.id}" value="${esc(h.fix)}" placeholder="例：色より、雲の位置を見ている"></label>` : '';
+    return `<li class="hypo${h.v ? ' is-' + h.v : ''}"><p class="ht"><span class="hn">仮説${i + 1}</span>${esc(h.text)}</p>${seg}${fix}</li>`;
+  }).join('');
+  const ready = m.hypos.every((h) => h.v);
+  const send = active ? `<div class="hypo-send"><button class="btn primary" type="button" data-action="send-hypos"${ready ? '' : ' disabled'}>答えを送る</button><span class="hint">${ready ? '「少し違う」には、ひとこと足すと正確になります' : 'すべての仮説に答えると送れます'}</span></div>` : '';
+  return `<ol class="hypos">${items}</ol>${send}`;
+}
+function renderScale() {
+  return `<div class="scale"><div class="seg big" role="group" aria-label="確かさ">${CERTS.map((v) => `<button type="button" data-action="scale" data-v="${v}">${v}</button>`).join('')}</div>
+    <p class="hint">いつも＝例外は「ただし」に書いたものだけ ／ たいてい＝ほかにも例外がありうる ／ 場合による＝目安として読んでほしい</p></div>`;
+}
+function renderPausePanel() {
+  const wrap = st.pausing === 'wrap';
+  return `<form class="composer pause" data-form="pause">
+    <p class="pause-title">${wrap ? `${st.session}回目はここまで` : 'いったん中断します'}</p>
+    <label for="memo">言いかけていたこと・次に話したいこと（1行）</label>
+    <input type="text" id="memo" value="${esc(st.memoDraft)}" maxlength="80" placeholder="例：帰りの便の話もしたい">
+    <div class="row"><span class="hint">次に開いたとき、最初にこのメモを出します。空でもかまいません</span><span class="btns">${wrap ? '' : '<button type="button" class="btn ghost" data-action="cancel-pause">続ける</button>'}<button class="btn primary" type="submit">${wrap ? '残して終える' : '残して中断する'}</button></span></div>
+  </form>`;
+}
+function renderComposer() {
+  if (st.thinking) {
+    return `<div class="composer"><div class="row"><div class="typing"><span class="d"></span><span class="d"></span><span class="d"></span><span class="t">${st.mode === 'live' ? '聞き手が考えています… <span id="think-sec">0</span>秒' : 'ノートに書き留めています…'}</span></div>${st.mode === 'live' ? '<button class="btn small ghost" type="button" data-action="stop">止める</button>' : ''}</div></div>`;
+  }
+  if (st.err) {
+    return `<div class="composer"><p class="err" role="alert">${esc(st.err.msg)}</p><div class="row"><span></span><span class="btns">${st.err.retry ? '<button class="btn primary" type="button" data-action="retry">もう一度送る</button>' : ''}<button class="btn ghost" type="button" data-action="to-demo">デモに戻る</button></span></div></div>`;
+  }
+  if (st.pausing) return renderPausePanel();
+  const m = lastAi();
+  if (st.mode === 'demo') {
+    const b = BEATS[st.beat];
+    if (!b) return '';
+    if (b.type === 'toReview') return `<div class="composer"><div class="row"><span class="hint">デモでは3回目を省いています</span><button class="btn primary" type="button" data-action="to-review">書き起こしを確かめる</button></div></div>`;
+    if (b.type !== 'text') return `<div class="composer"><p class="hint center">${b.type === 'scale' ? '上の3つから選んでください' : '上の仮説に答えてください'}</p></div>`;
+  } else if (m && !m.answered && (m.hypos || m.scale)) {
+    return `<div class="composer"><p class="hint center">${m.scale ? '上の3つから選んでください' : '上の仮説に答えてください。合うものがなければ「違う」を選んで送ると、別の聞き方をします'}</p></div>`;
+  } else if (st.mode === 'live' && st.ready) {
+    return `<div class="composer"><div class="row"><span class="hint">続けて話すこともできます</span><span class="btns"><button class="btn ghost" type="button" data-action="keep-talking">続けて話す</button><button class="btn primary" type="button" data-action="to-review">書き起こしを確かめる</button></span></div></div>`;
+  }
+  return `<form class="composer" data-form="answer">
+    <label class="sr" for="draft">${esc(st.meta.speaker)}の答え</label>
+    <textarea id="draft" rows="3" placeholder="話すように書いてください。音声入力も使えます">${esc(st.draft)}</textarea>
+    <div class="row"><span class="hint">${st.mode === 'demo' ? '佐藤さんの答えの例が入っています。書き換えても、デモのノートは台本どおりに書かれます' : 'Ctrl + Enter でも送れます'}${htag('H3')}</span><button class="btn primary" type="submit">送る</button></div>
+  </form>`;
+}
+function renderNote() {
+  const forks = st.timeline.filter((e) => e.fork).length;
+  const day = st.day ? `<p class="day-title${st.fresh.has('day') ? ' fresh' : ''}">${esc(st.day.title)}</p>${st.day.sub ? `<p class="day-sub">${esc(st.day.sub)}</p>` : ''}` : '';
+  const tl = st.day || st.timeline.length ? day + (st.timeline.length ? renderTimeline(st.timeline, st.fresh) : '') : '<p class="empty-note">まだ何も書き留めていません。話した1日の出来事が、ここに時刻順に並びます。</p>';
+  const cards = st.cards.length ? st.cards.map((c, i) => renderCard(c, i + 1, { speaker: st.meta.speaker, fresh: st.fresh, foot: true, idp: 'n-' })).join('') : '<p class="empty-note">判断カードは、分かれ目の理由を伺ったところから作ります。</p>';
+  return `<header class="note-head"><h2>聞き書きノート</h2><span class="note-stats">出来事 ${st.timeline.length} · 分かれ目 ${forks} · カード ${st.cards.length}</span></header>
+    <section><h3>その日の流れ</h3>${tl}</section>
+    <section><h3>判断カード</h3><div class="cardlist">${cards}</div></section>
+    <p class="legend"><span class="lg-fork">◆ 分かれ目</span><span class="lg-ai">点線＝AIの補い（未確認）</span>${htag('H1')}</p>`;
+}
+function renderInterview() {
+  const m = st.meta;
+  const log = st.msgs.map(renderMsg).join('');
+  const elapsed = st.mode === 'demo' ? `経過 約${st.min}分 / 20分` : `経過 <span id="elapsed">${elapsedMin()}</span>分`;
+  const freshN = st.badgeSeen === st.fresh ? 0 : st.fresh.size;
+  return `<div class="wrap interview" data-mtab="${st.mtab}">
+    <div class="mtabs" role="tablist" aria-label="表示する面">
+      <button type="button" role="tab" aria-selected="${st.mtab === 'talk'}" data-action="mtab" data-tab="talk">聞き取り</button>
+      <button type="button" role="tab" aria-selected="${st.mtab === 'note'}" data-action="mtab" data-tab="note">ノート · カード${st.cards.length}${st.mtab === 'talk' && freshN ? `<span class="badge">+${freshN}</span>` : ''}</button>
+    </div>
+    <section class="talk" aria-label="聞き取り">
+      <header class="talk-head">
+        <span class="session">${st.session}回目</span><span class="theme">${esc(m.theme)}</span><span class="elapsed">${elapsed}</span>
+        <span class="modechip${st.mode === 'live' ? ' live' : ''}">${st.mode === 'live' ? 'AIの聞き手' : 'デモ'}</span>
+        <span class="spacer"></span>
+        ${st.mode === 'live' && st.cards.length && !st.ready ? '<button class="btn small ghost" type="button" data-action="to-review">書き起こしを確かめる</button>' : ''}
+        <button class="btn small ghost" type="button" data-action="pause"${st.pausing || st.thinking ? ' disabled' : ''}>いったん中断する</button>
+      </header>
+      <div class="log" id="log">${log}</div>
+      ${renderComposer()}
+    </section>
+    <aside class="note" aria-label="聞き書きノート">${renderNote()}</aside>
+  </div>`;
+}
+
+function summaryLines() {
+  const lines = [];
+  if (st.day) {
+    const t = st.timeline.map((e) => e.time).filter((x) => /\d/.test(x)).sort();
+    lines.push(t.length >= 2 ? `${st.day.title}のことを、${t[0]}から${t[t.length - 1]}まで伺いました` : `${st.day.title}のことを伺いました`);
+  }
+  if (st.cards.length) {
+    lines.push(`判断カード ${st.cards.length}枚：${st.cards.map((c) => c.title).join('／')}`);
+    lines.push(`例外まで確かめたカード ${st.cards.filter((c) => c.unless.length).length}枚`);
+  }
+  if (!lines.length) lines.push('まだノートには何も書かれていません');
+  return lines;
+}
+function renderResume() {
+  const m = st.meta;
+  const next = st.mode === 'demo' ? ((BEATS[st.pendingBeat] || {}).topic || '') : (st.memo ? 'メモに書いたことから伺います' : '前回の続きから伺います');
+  const gap = st.mode === 'demo' ? (DEMO_GAPS[st.session] || '') : sinceLabel(st.pausedAt);
+  const cards = st.cards.map((c, i) => renderCard(c, i + 1, { speaker: m.speaker })).join('');
+  return `<section class="wrap resume">
+    <div class="letter"><p class="eyebrow">${esc(sessionDate(st.session + 1))} · ${esc(gap)}</p>
+    <h1 class="display">おかえりなさい、${esc(m.speaker)}。続きから伺います。</h1></div>
+    <div class="resume-grid">
+      <section class="rs"><h2>前回まで</h2><ul>${summaryLines().map((l) => `<li>${esc(l)}</li>`).join('')}</ul></section>
+      <section class="rs memo"><h2>あなたのメモ</h2>${st.memo ? `<p class="memo-text">「${esc(st.memo)}」</p>` : '<p class="muted">メモはありません</p>'}</section>
+      <section class="rs"><h2>次に伺うこと</h2><p class="next">${esc(next)}</p></section>
+    </div>
+    <div class="cta-row"><button class="btn primary" type="button" data-action="resume">続きから始める（${st.session + 1}回目・20分）</button><span class="hint">${st.memo ? '最初の問いは、メモから始めます' : '最初の問いは、前回の続きから始めます'}</span></div>
+    ${st.cards.length ? `<details class="peek"><summary>ノートを見る（カード ${st.cards.length}枚）</summary><div class="cardlist">${cards}</div></details>` : ''}
+  </section>`;
+}
+
+function reviewItems() {
+  const out = [];
+  st.cards.forEach((c, ci) => {
+    c.ai.forEach((a) => out.push({ type: 'ai', c, ci, a, done: a.status !== 'open' }));
+    if (c.certSource !== 'interview') out.push({ type: 'cert', c, ci, done: !!c.certainty });
+  });
+  return out;
+}
+function renderQItem(it, i) {
+  const n = i + 1;
+  const cl = `カード${it.ci + 1}`;
+  if (it.type === 'ai') {
+    const a = it.a;
+    if (a.status === 'ok') return `<li class="qitem done"><span class="qcheck">✓</span><span class="qnum">${n}</span><span>「${esc(a.match)}」は合っている</span></li>`;
+    if (a.status === 'fixed') return `<li class="qitem done"><span class="qcheck">✓</span><span class="qnum">${n}</span><span>「${esc(a.match)}」を「${esc(a.fixed)}」に直した</span></li>`;
+    const body = st.fixing === a.id
+      ? `<form class="qfix" data-form="fix" data-card="${esc(it.c.id)}" data-ai="${a.id}"><label class="sr" for="fx-${a.id}">直した言葉</label><input type="text" id="fx-${a.id}" value="${esc(a.match)}"><div class="row"><button class="btn small primary" type="submit">直して確かめた</button><button class="btn small ghost" type="button" data-action="fix-cancel">やめる</button></div></form>`
+      : `<div class="qact"><button class="btn small primary" type="button" data-action="ai-ok" data-card="${esc(it.c.id)}" data-ai="${a.id}">合っている</button><button class="btn small ghost" type="button" data-action="ai-fix" data-ai="${a.id}">直す</button></div>`;
+    return `<li class="qitem open" id="q-${a.id}"><div class="qhead"><span class="qnum">${n}</span><span class="qcard">${cl} · AIの補い</span><button class="linkbtn" type="button" data-action="find-ai" data-ai="${a.id}">本文で見る</button></div>
+      <p class="qmatch"><mark class="aim">${esc(a.match)}</mark></p><p class="qnote">${esc(a.note)}</p>${body}</li>`;
+  }
+  if (it.done) return `<li class="qitem done"><span class="qcheck">✓</span><span class="qnum">${n}</span><span>${cl}の確かさ：${esc(it.c.certainty)}</span></li>`;
+  return `<li class="qitem open"><div class="qhead"><span class="qnum">${n}</span><span class="qcard">${cl} · 確かさ</span></div><p class="qnote">「${esc(it.c.title)}」の確かさが、まだ決まっていません。</p>
+    <div class="seg" role="group" aria-label="${cl}の確かさ">${CERTS.map((v) => `<button type="button" data-action="cert" data-card="${esc(it.c.id)}" data-v="${v}">${v}</button>`).join('')}</div></li>`;
+}
+function renderReview() {
+  const m = st.meta;
+  const items = reviewItems();
+  const open = items.filter((x) => !x.done).length;
+  const num = new Map();
+  items.forEach((it, i) => { if (it.type === 'ai') num.set(it.a.id, i + 1); });
+  const aiNum = (a) => num.get(a.id) || '';
+  const cards = st.cards.map((c, i) => renderCard(c, i + 1, { speaker: m.speaker, reader: st.reader, aiNum, idp: 'd-' })).join('') || '<p class="empty-note">まだ判断カードがありません。聞き取りに戻って、理由を伺ったところからカードができます。</p>';
+  const dates = st.mode === 'demo' ? `${st.session}回（${DEMO_DATES.slice(0, st.session).join('・')}）` : `${st.session}回`;
+  const pct = items.length ? Math.round(((items.length - open) / items.length) * 100) : 100;
+  const demo = st.mode === 'demo';
+  return `<div class="wrap review">
+    <article class="doc${st.reader ? ' is-reader' : ''}" id="doc">
+      <div class="doc-tools"><button class="btn small ghost" type="button" data-action="back-interview">← 聞き取りに戻る</button><button class="btn small ${st.reader ? 'primary' : 'ghost'}" type="button" data-action="reader" aria-pressed="${st.reader}">${esc(m.successor)}が読む形で見る</button></div>
+      <p class="eyebrow">判断メモ</p>
+      <h1 class="display">${esc(m.theme)}</h1>
+      <p class="doc-by">${esc(m.speaker)}（${esc(m.role)}）の判断を、${esc(m.successor)}のために書き留めたもの</p>
+      <div class="doc-meta"><span><b>話し手</b>${esc(m.speaker)}</span><span><b>受け手</b>${esc(demo ? m.successorFull + '（' + m.successorRole + '）' : m.successor)}</span><span><b>聞き取り</b>${esc(dates)}</span>${st.day ? `<span><b>もとにした日</b>${esc(st.day.title)}</span>` : ''}</div>
+      ${st.reader ? '' : `<p class="legend"><span>「」＝${esc(m.speaker)}の言葉</span><span class="lg-ai">点線＝AIの補い（未確認・右の番号）</span></p>`}
+      <div class="doc-cards">${cards}</div>
+      ${st.timeline.length ? `<section class="doc-day"><h2>もとにした日の流れ${st.day ? '：' + esc(st.day.title) : ''}</h2>${renderTimeline(st.timeline)}</section>` : ''}
+    </article>
+    <aside class="queue" aria-label="確かめること">
+      <header><h2>確かめること</h2><p class="qcount"><b>${open}</b>件のこり / 全${items.length}件</p><div class="bar"><span style="width:${pct}%"></span></div></header>
+      <p class="qintro">AIが補ったところと、まだ決まっていない確かさだけを並べています。${esc(m.speaker)}の言葉（「」の中）は確かめなくてかまいません。</p>
+      <ol class="qlist">${items.map(renderQItem).join('')}</ol>
+      <div class="handoff">
+        <h3>渡す先${htag('H7')}</h3>
+        <label class="check"><input type="checkbox" checked disabled> ${esc(demo ? m.successorFull + '（' + m.successorRole + '）' : m.successor)}</label>
+        ${demo ? `<label class="check"><input type="checkbox" id="rcp-b" data-rcp="b"${st.rcpB ? ' checked' : ''}> ${esc(m.team)}</label>` : ''}
+        <button class="btn primary wide" type="button" data-action="handoff"${open || !st.cards.length ? ' disabled' : ''}>${!st.cards.length ? 'カードができると渡せます' : open ? `あと${open}件確かめると渡せます` : `${esc(m.successor)}に渡す`}</button>
+      </div>
+    </aside>
+  </div>`;
+}
+function memoAsText() {
+  const m = st.meta;
+  const L = [`判断メモ：${m.theme}`, `${m.speaker}（${m.role}）→ ${m.successor}`, ''];
+  st.cards.forEach((c, i) => {
+    L.push(`■ カード${i + 1} ${c.title}（確かさ：${c.certainty || '未定'}）`);
+    L.push(`もし　${c.if}`, `なら　${c.then}`);
+    if (c.unless.length) L.push('ただし　' + c.unless.join(' ／ '));
+    if (c.clues.length) L.push('理由・手がかり：' + c.clues.join('、'));
+    if (c.notClues.length) L.push('決め手ではないもの：' + c.notClues.join('、'));
+    c.pitfalls.forEach((p) => L.push('新人がやりがちなこと：' + p));
+    c.quotes.forEach((q) => L.push(`「${q}」— ${m.speaker}`));
+    L.push('');
+  });
+  if (st.timeline.length) { L.push(`もとにした日の流れ${st.day ? '（' + st.day.title + '）' : ''}`); st.timeline.forEach((e) => L.push(`${e.time}　${e.text}${e.fork ? '　◆分かれ目' : ''}`)); }
+  return L.join('\n');
+}
+function renderDone() {
+  const m = st.meta;
+  if (st.mode === 'demo') {
+    return `<section class="wrap donescr">
+      <p class="eyebrow">ゴール</p>
+      <h1 class="display">${esc(m.successor)}に判断メモを渡しました</h1>
+      <p class="muted">デモなので、実際にはどこにも送っていません。</p>
+      <ul class="done-list">
+        <li><b>${esc(m.successorFull)}</b>には、判断カード${st.cards.length}枚と、もとにした日の流れが届きます。${st.rcpB ? esc(m.team) + 'にも届きます。' : ''}</li>
+        <li><b>${esc(m.requester)}</b>には、渡し終えたことだけが伝わります。</li>
+        <li><b>${esc(m.speaker)}</b>は、あとからいつでも直せます。直すと、受け取った人の判断メモも新しくなります。</li>
+      </ul>
+      <div class="cta-row"><button class="btn primary" type="button" data-action="back-review">判断メモを見る</button><button class="btn ghost" type="button" data-action="reset">デモを最初から</button><a class="btn ghost" href="#map">マップを見る</a></div>
+    </section>`;
+  }
+  return `<section class="wrap donescr">
+    <p class="eyebrow">ゴール</p>
+    <h1 class="display">判断メモができました</h1>
+    <p class="muted">このプロトタイプには送る仕組みがありません。テキストとしてコピーして、${esc(m.successor)}に渡してください。</p>
+    <label class="sr" for="copytext">判断メモのテキスト</label>
+    <textarea id="copytext" class="copybox" readonly rows="12">${esc(memoAsText())}</textarea>
+    <div class="cta-row"><button class="btn primary" type="button" data-action="copy">テキストをコピー</button><button class="btn ghost" type="button" data-action="back-review">判断メモを見る</button><button class="btn ghost" type="button" data-action="to-demo">デモに戻る</button><span class="status" role="status">${esc(st.copied)}</span></div>
+  </section>`;
+}
+
+/* ---------- map view ---------- */
+function mapChecks() {
+  const s = MAP.steps;
+  const wantRe = /したい|たい[。、」）]|たい$/;
+  const uiRe = /ボタン|クリック|タップ|押す|画面|モーダル|入力欄|チェックボックス/;
+  const ng = s.filter((x) => !x.holdOk);
+  return [
+    { ok: s.every((x) => !wantRe.test(x.gaze)), t: '思考の視線に「〜したい」が入っていない', d: `${s.filter((x) => !wantRe.test(x.gaze)).length} / ${s.length} ステップ。欲求ではなく、意識の向き先で書いている` },
+    { ok: s.every((x) => !uiRe.test(x.action)), t: '行動に、ボタン名や操作の言葉が入っていない', d: `${s.filter((x) => !uiRe.test(x.action)).length} / ${s.length} ステップ` },
+    { ok: ng.every((x) => x.holdHow), t: '持てない情報（✕）のすべてに、持たせ方が決まっている', d: `✕ ${ng.length}件：${ng.map((x) => x.id + '＝' + x.holdHow.replace(/（.*）/, '')).join('、')}` },
+    { ok: s.every((x) => x.gap), t: 'すべてのステップにギャップが書けている', d: 'ギャップが書けないステップは、新しく作るものがないステップとして扱う' },
+    { ok: null, t: '「現在の状況」が、一つ前のステップの到達方法を通ったあとの姿になっている', d: '言葉では検算できないので、目で確かめる' },
+  ];
+}
+function renderMap() {
+  const steps = MAP.steps;
+  const g = MAP.goal;
+  const goalHtml = `<div class="goal"><p class="gk">誰が</p><p class="gv">${esc(g.who)}</p><p class="gk">何が分かれば</p><p class="gv">${esc(g.know)}</p><p class="gk">次に進む</p><p class="gv">${esc(g.next)}</p></div>`;
+  const rows = [
+    { k: '画面', grp: 'fact', label: '事実', f: (s) => `<b>${esc(s.screen)}</b><span class="mstatus">${esc(s.screenStatus)}</span><button class="linkbtn" type="button" data-action="goto-step" data-step="${s.id}">この画面を見る →</button>` },
+    { k: '思考の視線', grp: 'human', label: '人の側（UIがなくても決められる）', f: (s) => esc(s.gaze) },
+    { k: '保持している情報', grp: 'human', f: (s) => `${esc(s.hold)}<br><span class="hold ${s.holdOk ? 'ok' : 'ng'}">${s.holdOk ? '◯ 持てる' : '✕ 持てない'}</span><span class="holdwhy">${esc(s.holdWhy)}</span>${s.holdHow ? `<span class="holdhow">→ ${esc(s.holdHow)}</span>` : ''}` },
+    { k: '行動', grp: 'human', f: (s) => esc(s.action) },
+    { k: '現在の状況', grp: 'product', label: 'プロダクトの側', f: (s) => esc(s.now) },
+    { k: '理想のプランとギャップ', grp: 'product', f: (s) => `<span class="ideal">${esc(s.ideal)}</span><span class="gapsep" aria-hidden="true">↕ いま</span><span class="gap">${esc(s.gap)}</span>` },
+    { k: '到達方法', grp: 'product', cls: 'r-method', f: (s) => esc(s.method) },
+  ];
+  const head = `<tr><th scope="col" class="rowh corner">ステップ →<br>項目 ↓</th>${steps.map((s) => `<th scope="col" data-col="${s.id}" id="mcol-${s.id}"><span class="mnum">${s.id}</span><span class="mname">${esc(s.name)}</span></th>`).join('')}<th scope="col" class="goal-h"><span class="mnum">GOAL</span><span class="mname">ゴール</span></th></tr>`;
+  const body = rows.map((r, ri) => `<tr class="g-${r.grp}${r.cls ? ' ' + r.cls : ''}"><th scope="row" class="rowh">${r.label ? `<span class="grp">${esc(r.label)}</span>` : ''}${esc(r.k)}</th>${steps.map((s) => `<td data-col="${s.id}">${r.f(s)}</td>`).join('')}${ri === 0 ? `<td class="goalcell" rowspan="${rows.length}">${goalHtml}</td>` : ''}</tr>`).join('');
+  const opts = steps.map((s) => `<div class="opt-step"><h3><span class="mnum">${s.id}</span>${esc(s.name)}</h3>${s.options.map((o) => `<div class="opt"><span class="origin">${esc(o.origin)}</span><span class="idea">${esc(o.idea)}</span><span class="verdict v-${esc(o.verdict)}">${esc(o.verdict)}</span><span class="reason">${esc(o.why)}</span></div>`).join('')}</div>`).join('');
+  const hyps = MAP.hypotheses.map((h) => `<li><span class="hid">${h.id}</span><span>${esc(h.text)}</span><span class="hsteps">${h.steps.join(' ')}</span></li>`).join('');
+  const checks = mapChecks().map((c) => `<li><span class="mk${c.ok === null ? ' manual' : ''}">${c.ok === null ? '目' : c.ok ? '✓' : '✕'}</span><span>${esc(c.t)}<span class="cd">${esc(c.d)}</span></span></li>`).join('');
+  return `<section class="wrap map-intro">
+      <p class="eyebrow">インテント・リバースマップ</p>
+      <h1 class="display">${esc(MAP.title)}</h1>
+      <p class="lead">要求とUIのあいだにある判断を、ゴールから逆算して1枚に並べたマップです。横はゴールまでのステップ、縦は各ステップで決める7項目。「思考の視線」から「行動」までは人の側のことで、UIがなくても決められます。下の3行で初めてプロダクトの側を決め、いちばん下の「到達方法」がプロトタイプの画面になっています。</p>
+      <div class="map-meta"><p><b>要求</b>${esc(MAP.request)}</p><p><b>ステップの区切り</b>${esc(MAP.splitRule)}</p></div>
+    </section>
+    <div class="mapband" id="mapband"><table class="map"><thead>${head}</thead><tbody>${body}</tbody></table></div>
+    <section class="wrap sec"><h2>到達方法の候補と、外した理由</h2><p class="lead">候補は4つの起点から出して比べています。今の慣習どおり、似たサービスの慣習、システムが肩代わりする、ゴールから逆算する。</p><div class="opts">${opts}</div></section>
+    <section class="wrap sec"><h2>仮決めした点（仮説）</h2><p class="lead">根拠がないまま仮に決めて進めたところです。人が確かめるのは、ここだけで足ります。プロトタイプでは「仮説 H1」のような印で示しています。</p><ul class="hlist">${hyps}</ul></section>
+    <section class="wrap sec"><h2>検算</h2><p class="lead">言葉で確かめられる決まりは、このページがマップのデータを読んでその場で検算しています。</p><ul class="checks">${checks}</ul></section>
+    <div class="wrap map-foot"><a class="btn primary" href="#prototype">プロトタイプを触る →</a></div>`;
+}
+function focusMap() {
+  if (!mapFocus) return;
+  $$('.map .hl').forEach((el) => el.classList.remove('hl'));
+  const cells = $$(`.map [data-col="${mapFocus}"]`);
+  cells.forEach((el) => el.classList.add('hl'));
+  const band = $('#mapband');
+  const th = $('#mcol-' + mapFocus);
+  if (band && th) {
+    const rowh = $('.map .rowh');
+    band.scrollLeft = Math.max(0, th.offsetLeft - (rowh ? rowh.offsetWidth : 0) - 8);
+    const y = band.getBoundingClientRect().top + window.scrollY - 70;
+    window.scrollTo(0, Math.max(0, y));
+  }
+  mapFocus = null;
+}
+
+/* ---------- main render ---------- */
+function render() {
+  $('#view-prototype').hidden = view !== 'prototype';
+  $('#view-map').hidden = view !== 'map';
+  $$('.viewswitch a').forEach((a) => { if (a.dataset.view === view) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  if (view === 'map') {
+    if (!mapRendered) { $('#view-map').innerHTML = renderMap(); mapRendered = true; }
+    focusMap();
+    return;
+  }
+  const keepLog = $('#log') ? $('#log').scrollTop : 0;
+  const keepQueue = $('.queue') ? $('.queue').scrollTop : 0;
+  renderRailbar();
+  const html = st.screen === 'invite' ? renderInvite()
+    : st.screen === 'interview' ? renderInterview()
+      : st.screen === 'resume' ? renderResume()
+        : st.screen === 'review' ? renderReview()
+          : renderDone();
+  $('#screen').innerHTML = html;
+  const log = $('#log');
+  const queue = $('.queue');
+  if (queue) queue.scrollTop = keepQueue;
+  if (log && !st.scrollEnd) log.scrollTop = keepLog;
+  if (log && st.scrollEnd) {
+    log.scrollTop = log.scrollHeight;
+    if (narrow()) { const c = $('.composer'); if (c) c.scrollIntoView({ block: 'nearest' }); }
+    st.scrollEnd = false;
+  }
+  const la = st.screen === 'interview' ? lastAi() : null;
+  if (la && la.id !== lastAnnounced) { $('#announce').textContent = '聞き手：' + la.text; lastAnnounced = la.id; }
+  if (pendingFocus) {
+    const el = $(pendingFocus);
+    if (el) { el.focus({ preventScroll: true }); if (el.setSelectionRange && el.value) el.setSelectionRange(el.value.length, el.value.length); }
+    pendingFocus = null;
+  }
+}
+
+/* ---------- actions ---------- */
+function findCardAi(cid, aid) { const c = getCard(st, cid); return c ? [c, c.ai.find((a) => a.id === aid)] : [null, null]; }
+function replaceInCard(c, from, to) {
+  ['title', 'if', 'then'].forEach((k) => { c[k] = String(c[k]).split(from).join(to); });
+  ['unless', 'clues', 'notClues', 'pitfalls'].forEach((k) => { c[k] = c[k].map((x) => String(x).split(from).join(to)); });
+}
+function pulse(el) { if (!el) return; el.scrollIntoView({ block: 'center', behavior: reduceMotion ? 'auto' : 'smooth' }); el.classList.remove('pulse'); void el.offsetWidth; el.classList.add('pulse'); }
+
+const actions = {
+  start() { jumpTo('S2'); window.scrollTo(0, 0); },
+  reset() { st.confirmDiscard = false; jumpTo('S1'); window.scrollTo(0, 0); },
+  'goto-step'(t) { const s = t.dataset.step; jumpTo(s); if (view !== 'prototype') location.hash = 'prototype'; window.scrollTo(0, 0); },
+  'to-map-step'(t, e) { e.preventDefault(); mapFocus = t.dataset.step; if (location.hash === '#map') render(); else location.hash = 'map'; },
+  'toggle-notes'() { ui.notes = !ui.notes; store.set(UKEY, ui); render(); },
+  mtab(t) { st.mtab = t.dataset.tab; if (st.mtab === 'note') st.badgeSeen = st.fresh; render(); },
+  hv(t) {
+    const m = lastAi(); if (!m || !m.hypos) return;
+    const h = m.hypos.find((x) => x.id === t.dataset.h); if (!h) return;
+    h.v = t.dataset.v;
+    if (h.v === 'partly') {
+      if (!h.fix && st.mode === 'demo') { const b = BEATS[st.beat]; const src = b && b.hypos && b.hypos.find((x) => x.id === h.id); if (src && src.fix) h.fix = src.fix; }
+      pendingFocus = '#fix-' + h.id;
+    }
+    render();
+  },
+  'send-hypos'() { sendHypos(false); },
+  scale(t) { sendScale(t.dataset.v, false); },
+  pause() { st.pausing = 'manual'; pendingFocus = '#memo'; render(); },
+  'cancel-pause'() { st.pausing = false; render(); },
+  resume() { doResume(); window.scrollTo(0, 0); render(); },
+  'to-review'() { st.screen = 'review'; st.step = 'S7'; st.fixing = null; saveLive(); window.scrollTo(0, 0); render(); },
+  'keep-talking'() { st.ready = false; render(); },
+  'back-interview'() { st.screen = 'interview'; const b = st.mode === 'demo' ? BEATS[st.beat] : null; st.step = b ? b.step : (st.step === 'S7' ? 'S5' : st.step); st.scrollEnd = true; render(); },
+  'back-review'() { st.screen = 'review'; st.step = 'S7'; window.scrollTo(0, 0); render(); },
+  reader() { st.reader = !st.reader; render(); },
+  'ai-ok'(t) { const [, a] = findCardAi(t.dataset.card, t.dataset.ai); if (a) { a.status = 'ok'; st.fixing = null; saveLive(); render(); } },
+  'ai-fix'(t) { st.fixing = t.dataset.ai; pendingFocus = '#fx-' + t.dataset.ai; render(); },
+  'fix-cancel'() { st.fixing = null; render(); },
+  cert(t) { const c = getCard(st, t.dataset.card); if (c) { c.certainty = t.dataset.v; c.certSource = 'review'; saveLive(); render(); } },
+  'find-ai'(t) { pulse($(`#doc mark[data-ai="${t.dataset.ai}"]`)); },
+  'find-q'(t) { pulse($('#q-' + t.dataset.ai)); },
+  handoff() { st.screen = 'done'; saveLive(); window.scrollTo(0, 0); render(); },
+  'live-setup'() { st.liveSetup = true; pendingFocus = '#lf-theme'; render(); },
+  'live-cancel'() { st.liveSetup = false; render(); },
+  'live-continue'() {
+    const o = loadLive(); if (!o) return;
+    st = o;
+    if (st.screen === 'interview' || st.screen === 'invite' || st.screen === 'resume') { if (!st.pausedAt) st.pausedAt = o.savedAt || Date.now(); st.pausing = false; st.screen = 'resume'; st.step = 'S6'; }
+    window.scrollTo(0, 0); render();
+  },
+  'live-discard'() { if (!st.confirmDiscard) { st.confirmDiscard = true; render(); return; } store.del(LKEY); st.confirmDiscard = false; render(); },
+  'to-demo'() { if (liveCtl) liveCtl.abort(); saveLive(); st = freshState('demo'); window.scrollTo(0, 0); render(); },
+  stop() { if (liveCtl) liveCtl.abort(); },
+  retry() { st.err = null; liveTurn(); },
+  copy() {
+    const text = memoAsText();
+    const fallback = () => { const ta = $('#copytext'); if (ta) { ta.focus(); ta.select(); } st.copied = '選択しました。コピーしてお使いください'; const s = $('.donescr .status'); if (s) s.textContent = st.copied; };
+    try {
+      navigator.clipboard.writeText(text).then(() => { st.copied = 'コピーしました'; const s = $('.donescr .status'); if (s) s.textContent = st.copied; }, fallback);
+    } catch (e) { fallback(); }
+  },
+};
+
+document.addEventListener('click', (e) => {
+  const t = e.target.closest('[data-action]');
+  if (!t || t.disabled) return;
+  const fn = actions[t.dataset.action];
+  if (fn) fn(t, e);
+});
+document.addEventListener('input', (e) => {
+  const t = e.target;
+  if (t.id === 'draft') st.draft = t.value;
+  else if (t.id === 'memo') st.memoDraft = t.value;
+  else if (t.dataset.fix) { const m = lastAi(); const h = m && m.hypos && m.hypos.find((x) => x.id === t.dataset.fix); if (h) h.fix = t.value; }
+  else if (t.dataset.lf) st.liveForm[t.dataset.lf] = t.value;
+});
+document.addEventListener('change', (e) => { if (e.target.dataset.rcp === 'b') st.rcpB = e.target.checked; });
+document.addEventListener('keydown', (e) => {
+  if (e.target.id === 'draft' && e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); const f = e.target.form; if (f) f.requestSubmit(); }
+});
+document.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const f = e.target;
+  const kind = f.dataset.form;
+  if (kind === 'answer') { const ta = $('#draft'); sendText(ta ? ta.value : st.draft, false); if (st.mode === 'demo') return; }
+  else if (kind === 'pause') { const i = $('#memo'); doPause(i ? i.value.trim() : ''); window.scrollTo(0, 0); }
+  else if (kind === 'live') { startLive(st.liveForm); return; }
+  else if (kind === 'fix') {
+    const [c, a] = findCardAi(f.dataset.card, f.dataset.ai);
+    const val = ($('input', f) || {}).value;
+    const nv = String(val || '').trim();
+    if (c && a) {
+      if (nv && nv !== a.match) { replaceInCard(c, a.match, nv); a.status = 'fixed'; a.fixed = nv; }
+      else a.status = 'ok';
+      st.fixing = null; saveLive();
+    }
+  }
+  render();
+});
+
+setInterval(() => {
+  const ts = $('#think-sec'); if (ts && st.thinkStart) ts.textContent = String(Math.round((Date.now() - st.thinkStart) / 1000));
+  const el = $('#elapsed'); if (el) el.textContent = String(elapsedMin());
+}, 1000);
+
+function applyHash() {
+  const h = (location.hash || '').replace('#', '');
+  const nv = h === 'map' ? 'map' : 'prototype';
+  const changed = nv !== view;
+  const hadFocus = !!mapFocus;
+  view = nv;
+  render();
+  if (changed && !hadFocus) window.scrollTo(0, 0);
+}
+window.addEventListener('hashchange', applyHash);
+
+function serial(s) { return Object.assign({}, s, { fresh: [], thinking: false }); }
+function boot(data) {
+  try {
+    if (data && data.st && data.st.meta) { st = Object.assign(freshState(data.st.mode), data.st, { fresh: new Set(), thinking: false }); }
+  } catch (e) { st = freshState('demo'); }
+  const h = (location.hash || '').replace('#', '');
+  view = h === 'map' ? 'map' : 'prototype';
+  render();
+}
+try { if (window.claude && window.claude.hot && window.claude.hot.snapshot) window.claude.hot.snapshot(() => ({ st: serial(st) })); } catch (e) { /* not in a viewer */ }
+const hot = window.claude && window.claude.hot;
+if (hot && hot.ready) hot.ready(boot); else boot((hot && hot.data) || {});
+})();
+</script>
